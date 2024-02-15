@@ -23,7 +23,7 @@ const CONFIG = {
 	sourcemap: process.argv.includes('--development'),
 	// Compresses bundle
 	// More information: https://esbuild.github.io/api/#minify
-	minify: true,
+	minify: false,
 	// Removes all console lines from bundle
 	// More information: https://esbuild.github.io/api/#drop
 	drop: process.argv.includes('--production') ? ['console'] : [],
