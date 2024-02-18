@@ -1,5 +1,5 @@
 export class FetchClient {
-  async makeRequest (
+  public async makeRequest (
     host: string,
     path: string,
     method: string = 'GET',
