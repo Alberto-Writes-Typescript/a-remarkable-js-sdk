@@ -1,11 +1,25 @@
 // @ts-nocheck
+
+/**
+ * JSDom Jest Environment does not support fetch API. This is a workaround to make it work in our tests.
+ * More information: https://github.com/jsdom/jsdom/issues/1724
+ */
 import 'whatwg-fetch'
+
+/**
+ * Due to Polly.js deprecations, we use NodeHTTPAdapter instead of FetchAdapter.
+ * When @pollyjs/adapter-fetch is running in a Node.js environment, it uses a polyfill
+ * for fetch, which is not as reliable or feature-complete as the native fetch API in
+ * the browser. That's why the package maintainers have deprecated its use in Node.js
+ * and recommend using the @pollyjs/adapter-node-http package instead.
+ */
 import { Polly } from '@pollyjs/core'
 import * as FSPersister from '@pollyjs/persister-fs'
-import * as FetchAdapter from '@pollyjs/adapter-fetch'
+import * as NodeHttpAdapter from '@pollyjs/adapter-node-http'
+
 import { FetchClient } from '../../src/net/FetchClient'
 
-Polly.register(FetchAdapter)
+Polly.register(NodeHttpAdapter)
 Polly.register(FSPersister)
 
 describe('FetchClient', () => {
@@ -18,9 +32,9 @@ describe('FetchClient', () => {
   describe('#makeRequest', () => {
     it('returns Response object', async () => {
       let polly = new Polly('#makeRequest', {
-        adapters: ['fetch'],
+        adapters: ['node-http'],
         persister: 'fs',
-        persisterOptions: { fs: { recordingsDir: '__recordings__' } }
+        persisterOptions: { fs: { recordingsDir: '__recordings__' } },
       })
 
       const response = await fetchClient.makeRequest(SAMPLE_HOST, SAMPLE_PATH, 'GET')
@@ -31,7 +45,7 @@ describe('FetchClient', () => {
 
     it('performs request to given URL', async () => {
       let polly = new Polly('#makeRequest', {
-        adapters: ['fetch'],
+        adapters: ['node-http'],
         persister: 'fs',
         persisterOptions: { fs: { recordingsDir: '__recordings__' } }
       })
