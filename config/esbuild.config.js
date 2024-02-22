@@ -5,7 +5,7 @@ const path = require('node:path');
  * Configuration for ESBuild bundling
  * ----------------------------------
  * (!) ESBuild detects automatically we are using TS,
- *     so there is no specifial configuration required
+ *     so there is no specific configuration required
  */
 const CONFIG = {
 	bundle: true,
