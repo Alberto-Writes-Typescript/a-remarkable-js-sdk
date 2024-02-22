@@ -7,9 +7,7 @@ export class FetchClient {
     body: string = null
   ) {
     const url = new URL(path, host)
-    const response = await this.fetchMethod(url.toString(), { method, headers, body })
+    const response = await fetch(url.toString(), { method, headers, body })
     return response
   }
-
-  private get fetchMethod () { return globalThis.fetch }
 }
