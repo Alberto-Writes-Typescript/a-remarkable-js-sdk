@@ -34,7 +34,7 @@ describe('FetchClient', () => {
       let polly = new Polly('#makeRequest', {
         adapters: ['node-http'],
         persister: 'fs',
-        persisterOptions: { fs: { recordingsDir: '__recordings__' } },
+        persisterOptions: { fs: { recordingsDir: './test/recordings/FetchClient' } },
       })
 
       const response = await fetchClient.makeRequest(SAMPLE_HOST, SAMPLE_PATH, 'GET')
@@ -47,7 +47,7 @@ describe('FetchClient', () => {
       let polly = new Polly('#makeRequest', {
         adapters: ['node-http'],
         persister: 'fs',
-        persisterOptions: { fs: { recordingsDir: '__recordings__' } }
+        persisterOptions: { fs: { recordingsDir: './test/recordings/FetchClient' } },
       })
 
       const response = await fetchClient.makeRequest(SAMPLE_HOST, SAMPLE_PATH, 'GET')
