@@ -14,7 +14,7 @@ export function startHttpRecording() {
     { persisterOptions: { fs: { recordingsDir: recordName } } }
   )
 
-  return new Polly('#makeRequest', configuration)
+  return new Polly('recordings', configuration)
 }
 
 export async function stopHttpRecording(polly: Polly) {
