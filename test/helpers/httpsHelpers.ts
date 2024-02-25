@@ -7,7 +7,8 @@ export function mockHttpsRequest (
   headers: string,
   body: Record<string, string> | null = null
 ): any {
-  const options = { hostname: host, path, method, headers }
+  const hostname = (new URL(path, host)).hostname
+  const options = { hostname, path, method, headers }
 
   const mockHttpsRequest = jest
     .spyOn(https, 'request')
