@@ -1,4 +1,5 @@
 import * as https from 'https'
+import { HttpClient } from './HttpClient'
 
 interface NodeClientRequest {
   body: string | null,
@@ -10,7 +11,7 @@ interface NodeClientRequest {
   }
 }
 
-export class NodeClient {
+export class NodeClient extends HttpClient {
   public static async get (
     host: string,
     path: string,
@@ -23,7 +24,7 @@ export class NodeClient {
     host: string,
     path: string,
     headers: Record<string, string> = {},
-    body: Record<string, string>
+    body: Record<string, string> = {}
   ): Promise<Response> {
     return await this.makeRequest(this.request(host, path, 'POST', headers, body))
   }
@@ -32,7 +33,7 @@ export class NodeClient {
     host: string,
     path: string,
     headers: Record<string, string> = {},
-    body: Record<string, string>
+    body: Record<string, string> = {}
   ): Promise<Response> {
     return await this.makeRequest(this.request(host, path, 'PATCH', headers, body))
   }
@@ -41,7 +42,7 @@ export class NodeClient {
     host: string,
     path: string,
     headers: Record<string, string> = {},
-    body: Record<string, string>
+    body: Record<string, string> = {}
   ): Promise<Response> {
     return await this.makeRequest(this.request(host, path, 'PUT', headers, body))
   }
