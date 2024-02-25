@@ -22,7 +22,7 @@ describe('FetchClient', () => {
 
       const method:string = 'GET'
       const host: string = 'https://jsonplaceholder.typicode.com'
-      const path: string = 'todos/1'
+      const path: string = '/todos/1'
       const headers = { Authorization: 'Bearer token' }
 
       FetchClient.get('https://jsonplaceholder.typicode.com', '/todos/1', headers)
@@ -66,7 +66,7 @@ describe('FetchClient', () => {
 
       FetchClient.post(
         'https://jsonplaceholder.typicode.com',
-        'posts',
+        '/posts',
         headers,
         body
       )
@@ -102,7 +102,7 @@ describe('FetchClient', () => {
 
       FetchClient.patch(
         'https://jsonplaceholder.typicode.com',
-        'posts/1',
+        '/posts/1',
         headers,
         body
       )
