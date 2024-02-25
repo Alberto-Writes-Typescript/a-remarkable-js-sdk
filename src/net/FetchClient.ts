@@ -1,4 +1,6 @@
-export class FetchClient {
+import { HttpClient } from './HttpClient';
+
+export class FetchClient extends HttpClient {
   public static async get (
     host: string,
     path: string,
@@ -11,7 +13,7 @@ export class FetchClient {
     host: string,
     path: string,
     headers: Record<string, string> = {},
-    body: string
+    body: Record<string, string> = {}
   ): Promise<Response> {
     return await this.makeRequest(this.request(host, path, 'POST', headers, body))
   }
@@ -20,7 +22,7 @@ export class FetchClient {
     host: string,
     path: string,
     headers: Record<string, string> = {},
-    body: string
+    body: Record<string, string> = {}
   ): Promise<Response> {
     return await this.makeRequest(this.request(host, path, 'PATCH', headers, body))
   }
@@ -29,7 +31,7 @@ export class FetchClient {
     host: string,
     path: string,
     headers: Record<string, string> = {},
-    body: string
+    body: Record<string, string> = {}
   ): Promise<Response> {
     return await this.makeRequest(this.request(host, path, 'PUT', headers, body))
   }
@@ -51,9 +53,9 @@ export class FetchClient {
     path: string,
     method: string,
     headers: Record<string, string>,
-    body: string | null
+    body: Record<string, string> | null
   ): Request {
     const url = new URL(path, host)
-    return new Request(url.toString(), { method, headers: headers, body })
+    return new Request(url.toString(), { method, headers: headers, body: body ? JSON.stringify(body) : null })
   }
 }

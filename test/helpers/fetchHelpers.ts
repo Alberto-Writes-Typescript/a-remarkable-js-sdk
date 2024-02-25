@@ -19,10 +19,10 @@ export function assertRequestPayload (
   path: string,
   method: string,
   headers: Record<string, string>,
-  body: string | null = null
+  body: Record<string, string> | null = null
 ): void {
   const url = new URL(path, host)
-  const request = new Request(url.toString(), { method, headers, body })
+  const request = new Request(url.toString(), { method, headers, body: body ? JSON.stringify(body) : null })
 
   expect(mock).toHaveBeenCalledWith(request)
 }
