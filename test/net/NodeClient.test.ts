@@ -3,9 +3,9 @@
  */
 // @ts-nocheck
 import * as https from 'https'
-import { NodeClient } from '../src/NodeClient'
-import { setupHttpRecording } from './helpers/pollyHelpers'
-import { assertRequestPayload, mockHttpsRequest, restoreHttpsRequest } from './helpers/httpsHelpers'
+import { NodeClient } from '../../src/net/NodeClient'
+import { setupHttpRecording } from '../helpers/pollyHelpers'
+import { assertRequestPayload, mockHttpsRequest, restoreHttpsRequest } from '../helpers/httpsHelpers'
 
 describe('NodeClient', () => {
   // Enables Polly.js to record and replay HTTP requests for each test

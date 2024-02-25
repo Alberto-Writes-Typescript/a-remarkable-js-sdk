@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { FetchClient } from '../src/FetchClient'
-import { setupHttpRecording } from './helpers/pollyHelpers'
-import { assertRequestPayload, mockFetch, restoreFetch } from './helpers/fetchHelpers'
+import { FetchClient } from '../../src/net/FetchClient'
+import { setupHttpRecording } from '../helpers/pollyHelpers'
+import { assertRequestPayload, mockFetch, restoreFetch } from '../helpers/fetchHelpers'
 
 describe('FetchClient', () => {
   // Enables Polly.js to record and replay HTTP requests for each test
