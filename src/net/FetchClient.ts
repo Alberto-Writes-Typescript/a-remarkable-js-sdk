@@ -1,4 +1,5 @@
 import { HttpClient } from './HttpClient';
+import HttpClientRequest from "./HttpClientRequest";
 
 export class FetchClient extends HttpClient {
   public static async get (
@@ -44,8 +45,8 @@ export class FetchClient extends HttpClient {
     return await this.makeRequest(this.request(host, path, 'DELETE', headers, null))
   }
 
-  private static async makeRequest (request: Request): Promise<Response> {
-    return await fetch(request)
+  private static async makeRequest (httpClientRequest: HttpClientRequest): Promise<Response> {
+    return await fetch(httpClientRequest.toRequest())
   }
 
   private static request(
@@ -54,8 +55,7 @@ export class FetchClient extends HttpClient {
     method: string,
     headers: Record<string, string>,
     body: Record<string, string> | null
-  ): Request {
-    const url = new URL(path, host)
-    return new Request(url.toString(), { method, headers: headers, body: body ? JSON.stringify(body) : null })
+  ): HttpClientRequest {
+    return new HttpClientRequest(host, path, method, headers, body)
   }
 }
