@@ -81,6 +81,6 @@ export class NodeClient {
     headers: Record<string, string>,
     body: Record<string, string> | null
   ): NodeClientRequest {
-    return { body: JSON.stringify(body), options: { hostname: host, path, method, headers, body } } as NodeClientRequest
+    return { body: JSON.stringify(body), options: { hostname: host, path, method, headers } } as NodeClientRequest
   }
 }
