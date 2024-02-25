@@ -1,3 +1,10 @@
+interface HttpsRequestOptions {
+  hostname: string,
+  path: string,
+  method: string,
+  headers: Record<string, string>
+}
+
 export default class HttpClientRequest {
   readonly url: URL
   readonly method: string
@@ -17,14 +24,27 @@ export default class HttpClientRequest {
     this.body = body
   }
 
+  get stringifiedBody(): string | null {
+    return this.body ? JSON.stringify(this.body) : null
+  }
+
   toRequest(): Request {
     return new Request(
       this.url.toString(),
       {
         method: this.method,
         headers: this.headers,
-        body: this.body ? JSON.stringify(this.body) : null
+        body: this.stringifiedBody
       }
     )
+  }
+
+  toHttpsRequestOptions(): HttpsRequestOptions {
+    return {
+      hostname: this.url.hostname,
+      path: this.url.pathname,
+      method: this.method,
+      headers: this.headers
+    }
   }
 }

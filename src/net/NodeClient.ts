@@ -1,5 +1,6 @@
 import * as https from 'https'
 import { HttpClient } from './HttpClient'
+import HttpClientRequest from "./HttpClientRequest";
 
 interface NodeClientRequest {
   body: string | null,
@@ -55,21 +56,24 @@ export class NodeClient extends HttpClient {
     return await this.makeRequest(this.request(host, path, 'DELETE', headers, null))
   }
 
-  private static async makeRequest (request: NodeClientRequest): Promise<Response> {
+  private static async makeRequest (httpClientRequest: HttpClientRequest): Promise<Response> {
     return new Promise((resolve: Function, reject: Function) => {
-      const httpsRequest = https.request(request.options, (response) => {
-        let responseData: string = ''
+      const httpsRequest = https.request(
+        httpClientRequest.toHttpsRequestOptions(),
+        (response) => {
+          let responseData: string = ''
 
-        response.on('data', (chunk) => responseData += chunk)
+          response.on('data', (chunk) => responseData += chunk)
 
-        response.on('end', () =>
-          resolve(new Response(responseData, { status: response.statusCode, statusText: response.statusMessage }))
-        )
-      })
+          response.on('end', () =>
+            resolve(new Response(responseData, { status: response.statusCode, statusText: response.statusMessage }))
+          )
+        }
+      )
 
       httpsRequest.on('error', (error) => { reject(error) })
 
-      if (request.body) httpsRequest.write(request.body)
+      if (httpClientRequest.body) httpsRequest.write(httpClientRequest.stringifiedBody)
 
       httpsRequest.end()
     })
@@ -81,7 +85,7 @@ export class NodeClient extends HttpClient {
     method: string,
     headers: Record<string, string>,
     body: Record<string, string> | null
-  ): NodeClientRequest {
-    return { body: JSON.stringify(body), options: { hostname: host, path, method, headers } } as NodeClientRequest
+  ): HttpClientRequest {
+    return new HttpClientRequest(host, path, method, headers, body)
   }
 }
