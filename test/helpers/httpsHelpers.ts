@@ -4,7 +4,7 @@ export function mockHttpsRequest (
   host: string,
   path: string,
   method: string,
-  headers: string,
+  headers: Record<string, string>,
   body: Record<string, string> | null = null
 ): any {
   const hostname = (new URL(path, host)).hostname
