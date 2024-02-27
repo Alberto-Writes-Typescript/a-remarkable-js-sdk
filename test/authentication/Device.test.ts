@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 // @ts-nocheck
-import { Device } from '../../src/authentication/Device'
+import Device from '../../src/authentication/Device'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
 
 const SAMPLE_ONE_TIME_CODE = 'cfdaemci'

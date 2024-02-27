@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { FetchClient } from '../../src/net/FetchClient'
+
+import FetchClient from '../../src/net/FetchClient'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
 import { assertRequestPayload, mockFetch, restoreFetch } from '../helpers/fetchHelpers'
 

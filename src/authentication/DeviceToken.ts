@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode'
-import { DeviceDescription } from './Device'
+import { DeviceDescription } from './DeviceDescription'
 
 /**
  * Token issued by reMarkable after pairing a device

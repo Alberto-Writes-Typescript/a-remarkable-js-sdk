@@ -3,7 +3,8 @@
  */
 // @ts-nocheck
 import * as https from 'https'
-import { NodeClient } from '../../src/net/NodeClient'
+
+import NodeClient from '../../src/net/NodeClient'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
 import { assertRequestPayload, mockHttpsRequest, restoreHttpsRequest } from '../helpers/httpsHelpers'
 

@@ -1,19 +1,12 @@
 import DeviceToken from './DeviceToken'
-import { NodeClient } from '../net/NodeClient'
-
-export type DeviceDescription =
-  'browser-chrome' |
-  'desktop-macos' |
-  'desktop-windows' |
-  'mobile-android' |
-  'mobile-ios' |
-  'remarkable'
+import NodeClient from '../net/NodeClient'
+import { DeviceDescription } from './DeviceDescription'
 
 const REMARKABLE_HOST: string = 'https://webapp-prod.cloud.remarkable.engineering'
 const PAIR_PATH: string = '/token/json/2/device/new'
 const SESSION_PATH: string = '/token/json/2/user/new'
 
-export class Device {
+export default class Device {
   public static async pair(id: string, description: DeviceDescription, oneTimeCode: string): Promise<Device> {
     const pairResponse = await NodeClient.post(
       REMARKABLE_HOST,
