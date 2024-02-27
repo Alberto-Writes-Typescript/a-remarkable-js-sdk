@@ -1,10 +1,7 @@
 import DeviceToken from './DeviceToken'
 import NodeClient from '../net/NodeClient'
 import { DeviceDescription } from './DeviceDescription'
-
-const REMARKABLE_HOST: string = 'https://webapp-prod.cloud.remarkable.engineering'
-const PAIR_PATH: string = '/token/json/2/device/new'
-const SESSION_PATH: string = '/token/json/2/user/new'
+import { PAIR_PATH, REMARKABLE_HOST, SESSION_PATH } from '../constants'
 
 export default class Device {
   public static async pair(id: string, description: DeviceDescription, oneTimeCode: string): Promise<Device> {
