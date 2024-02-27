@@ -20,8 +20,10 @@ import { Polly } from '@pollyjs/core'
 import * as FSPersister from '@pollyjs/persister-fs'
 import * as NodeHttpAdapter from '@pollyjs/adapter-node-http'
 
-// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 Polly.register(NodeHttpAdapter)
-// @ts-ignore
-Polly.register(FSPersister)
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error es
+Polly.register(FSPersister)

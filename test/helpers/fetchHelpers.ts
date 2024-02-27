@@ -6,10 +6,11 @@ export function mockFetch (): jest.Mock {
 
 export function restoreFetch (): void {
   if (jest.isMockFunction(globalThis.fetch)) {
-    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     globalThis.fetch.mockRestore()
   } else {
-    throw('You tried to restore fetch, but it was not a mock function.')
+    throw (new Error('You tried to restore fetch, but it was not a mock function.'))
   }
 }
 
@@ -22,7 +23,7 @@ export function assertRequestPayload (
   body: Record<string, string> | null = null
 ): void {
   const url = new URL(path, host)
-  const request = new Request(url.toString(), { method, headers, body: body ? JSON.stringify(body) : null })
+  const request = new Request(url.toString(), { method, headers, body: (body != null) ? JSON.stringify(body) : null })
 
   expect(mock).toHaveBeenCalledWith(request)
 }

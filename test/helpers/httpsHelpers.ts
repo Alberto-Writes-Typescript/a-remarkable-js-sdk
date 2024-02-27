@@ -6,18 +6,20 @@ export function mockHttpsRequest (
   method: string,
   headers: Record<string, string>,
   body: Record<string, string> | null = null
-): any {
+): jest.Mock {
   const hostname = (new URL(path, host)).hostname
   const options = { hostname, path, method, headers }
 
   const mockHttpsRequest = jest
     .spyOn(https, 'request')
-    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     .mockImplementation((opts, callback) => {
       expect(opts).toEqual(options)
 
       const mockResponse = {
-        statusCode: 200, headers: {},
+        statusCode: 200,
+        headers: {},
         on: jest.fn().mockImplementation((event, eventCallback) => {
           if (event === 'data') {
             eventCallback(JSON.stringify({ data: 'mock data' }))
@@ -28,22 +30,23 @@ export function mockHttpsRequest (
         })
       }
 
-      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       callback(mockResponse)
 
       return mockResponse
     })
 
-  return mockHttpsRequest
+  return mockHttpsRequest as jest.Mock
 }
 
 export function restoreHttpsRequest (): void {
-  // @ts-ignore
   if (jest.isMockFunction(https.request)) {
-    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     https.request.mockRestore()
   } else {
-    throw('You tried to restore fetch, but it was not a mock function.')
+    throw (new Error('You tried to restore fetch, but it was not a mock function.'))
   }
 }
 
