@@ -29,3 +29,27 @@ jobs:
 
       - name: Run tests
         run: yarn test
+  lint:
+    environment: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '21.5.0'
+          cache: 'yarn'
+
+      - name: Install Dependencies
+        run: yarn install --pure-lockfile
+
+      - name: Load linter cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/eslint/
+          key: ${{ runner.os }}-eslint-${{ hashFiles('**/package-lock.json', '**/.eslintrc') }}
+
+      - name: Run tests
+        run: yarn lint --cache --cache-strategy content --cache-location ~/.cache/eslint/current
