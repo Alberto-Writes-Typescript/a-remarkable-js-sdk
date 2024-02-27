@@ -3,3 +3,6 @@ node_modules/
 
 # Ignore project bundle
 dist/
+
+# Ignore IDE configuration files
+.idea/
