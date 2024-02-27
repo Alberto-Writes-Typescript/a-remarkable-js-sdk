@@ -1,4 +1,4 @@
-export abstract class HttpClient {
+export default abstract class HttpClient {
   public static async get (
     host: string,
     path: string,

@@ -1,6 +1,6 @@
 import * as https from 'https'
-import { HttpClient } from './HttpClient'
-import HttpClientRequest from "./HttpClientRequest";
+import HttpClient from './HttpClient'
+import HttpClientRequest from './HttpClientRequest'
 
 interface NodeClientRequest {
   body: string | null,
@@ -12,7 +12,7 @@ interface NodeClientRequest {
   }
 }
 
-export class NodeClient extends HttpClient {
+export default class NodeClient extends HttpClient {
   public static async get (
     host: string,
     path: string,

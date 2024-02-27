@@ -1,7 +1,7 @@
-import { HttpClient } from './HttpClient';
-import HttpClientRequest from "./HttpClientRequest";
+import HttpClient from './HttpClient'
+import HttpClientRequest from './HttpClientRequest'
 
-export class FetchClient extends HttpClient {
+export default class FetchClient extends HttpClient {
   public static async get (
     host: string,
     path: string,
