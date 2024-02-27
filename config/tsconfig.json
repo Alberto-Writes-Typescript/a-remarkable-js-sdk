@@ -107,6 +107,7 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
   // Don't transpile node_modules, anything in the dist/ directory, or any test files with the *.test.ts filename structure.
-  "exclude": [
-    "../node_modules", "dist", "**/*.test.ts"]
+  "exclude": ["../node_modules", "../dist", "**/*.test.ts"],
+  // Set of files Typescript will apply type-checking to. This line also tells ESLint which files to lint
+  "include": ["../src/**/*.ts", "../test/**/*.ts"]
 }
