@@ -1,7 +1,7 @@
 interface HttpsRequestOptions {
-  hostname: string,
-  path: string,
-  method: string,
+  hostname: string
+  path: string
+  method: string
   headers: Record<string, string>
 }
 
@@ -11,7 +11,7 @@ export default class HttpClientRequest {
   readonly headers: Record<string, string> | null
   readonly body: Record<string, string> | null
 
-  constructor(
+  constructor (
     host: string,
     path: string,
     method: string,
@@ -24,11 +24,11 @@ export default class HttpClientRequest {
     this.body = body
   }
 
-  get stringifiedBody(): string | null {
-    return this.body ? JSON.stringify(this.body) : null
+  get stringifiedBody (): string | null {
+    return (this.body != null) ? JSON.stringify(this.body) : null
   }
 
-  toRequest(): Request {
+  toRequest (): Request {
     return new Request(
       this.url.toString(),
       {
@@ -39,7 +39,7 @@ export default class HttpClientRequest {
     )
   }
 
-  toHttpsRequestOptions(): HttpsRequestOptions {
+  toHttpsRequestOptions (): HttpsRequestOptions {
     return {
       hostname: this.url.hostname,
       path: this.url.pathname,

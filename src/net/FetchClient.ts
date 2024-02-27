@@ -49,7 +49,7 @@ export default class FetchClient extends HttpClient {
     return await fetch(httpClientRequest.toRequest())
   }
 
-  private static request(
+  private static request (
     host: string,
     path: string,
     method: string,

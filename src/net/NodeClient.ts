@@ -2,16 +2,6 @@ import * as https from 'https'
 import HttpClient from './HttpClient'
 import HttpClientRequest from './HttpClientRequest'
 
-interface NodeClientRequest {
-  body: string | null,
-  options: {
-    hostname: string,
-    path: string,
-    method: string,
-    headers: Record<string, string>,
-  }
-}
-
 export default class NodeClient extends HttpClient {
   public static async get (
     host: string,
@@ -57,13 +47,15 @@ export default class NodeClient extends HttpClient {
   }
 
   private static async makeRequest (httpClientRequest: HttpClientRequest): Promise<Response> {
-    return new Promise((resolve: Function, reject: Function) => {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    return await new Promise((resolve: Function, reject: Function) => {
       const httpsRequest = https.request(
         httpClientRequest.toHttpsRequestOptions(),
         (response) => {
           let responseData: string = ''
 
-          response.on('data', (chunk) => responseData += chunk)
+          // eslint-disable-next-line no-return-assign
+          response.on('data', (chunk): string => responseData += chunk)
 
           response.on('end', () =>
             resolve(new Response(responseData, { status: response.statusCode, statusText: response.statusMessage }))
@@ -73,13 +65,13 @@ export default class NodeClient extends HttpClient {
 
       httpsRequest.on('error', (error) => { reject(error) })
 
-      if (httpClientRequest.body) httpsRequest.write(httpClientRequest.stringifiedBody)
+      if (httpClientRequest.body != null) httpsRequest.write(httpClientRequest.stringifiedBody)
 
       httpsRequest.end()
     })
   }
 
-  private static request(
+  private static request (
     host: string,
     path: string,
     method: string,

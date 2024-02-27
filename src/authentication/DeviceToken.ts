@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode'
-import { DeviceDescription } from './DeviceDescription'
+import { type DeviceDescription } from './DeviceDescription'
 
 /**
  * Token issued by reMarkable after pairing a device
@@ -20,16 +20,16 @@ export default class DeviceToken {
   public readonly token: string
   public readonly deviceId: string
   public readonly deviceDescription: DeviceDescription
-  public readonly issuer: 'rM WebApp'
-  public readonly subject: 'rM Device Token'
+  public readonly issuer: string
+  public readonly subject: string
 
-  constructor(token: string) {
-    const parsedToken = jwtDecode(token) as Record<string, any>
+  constructor (token: string) {
+    const parsedToken = jwtDecode(token)
 
     this.token = token
     this.deviceId = parsedToken['device-id']
     this.deviceDescription = parsedToken['device-desc']
-    this.issuer = parsedToken['iss']
-    this.subject = parsedToken['sub']
+    this.issuer = parsedToken.iss
+    this.subject = parsedToken.sub
   }
 }
