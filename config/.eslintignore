@@ -1,0 +1,8 @@
+# Ignore artifacts:
+# -----------------
+
+# Project dependencies
+node_modules
+
+# Project builds
+dist
