@@ -6,3 +6,6 @@ dist/
 
 # Ignore IDE configuration files
 .idea/
+
+# Ignore test environment variables
+.env.test
