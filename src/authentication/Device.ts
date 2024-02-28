@@ -1,12 +1,12 @@
 import DeviceToken from './DeviceToken'
 import NodeClient from '../net/NodeClient'
 import { type DeviceDescription } from './DeviceDescription'
-import { PAIR_PATH, REMARKABLE_HOST, SESSION_PATH } from '../constants'
+import { AUTHENTICATION_HOST, PAIR_PATH, SESSION_PATH } from '../constants'
 
 export default class Device {
   public static async pair (id: string, description: DeviceDescription, oneTimeCode: string): Promise<Device> {
     const pairResponse = await NodeClient.post(
-      REMARKABLE_HOST,
+      AUTHENTICATION_HOST,
       PAIR_PATH,
       {},
       { code: oneTimeCode, deviceID: id, deviceDesc: description }
@@ -43,7 +43,7 @@ export default class Device {
 
   public async connect (): Promise<Device> {
     const connectResponse = await NodeClient.post(
-      REMARKABLE_HOST,
+      AUTHENTICATION_HOST,
       SESSION_PATH,
       { Authorization: `Bearer ${this.pairToken.token}` },
       {}
