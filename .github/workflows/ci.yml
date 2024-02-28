@@ -24,6 +24,11 @@ jobs:
           node-version: '21.5.0'
           cache: 'yarn'
 
+      - name: Set up environment variables
+        run: |
+          echo SAMPLE_UUID=${{ secrets.SAMPLE_UUID }} >> .env.test
+          echo SAMPLE_PAIR_TOKEN=${{ secrets.SAMPLE_PAIR_TOKEN }} >> .env.test
+
       - name: Install Dependencies
         run: yarn install --pure-lockfile
 
