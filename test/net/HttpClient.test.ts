@@ -1,5 +1,5 @@
 import HttpClient from '../../src/net/HttpClient'
-import HttpClientContext from '../../src/net/HttpClientContext'
+import type HttpClientContext from '../../src/net/HttpClientContext'
 
 /**
  * Test HTTP client used to test the behavior of HttpClient instances
@@ -16,7 +16,7 @@ class TestHttpClient extends HttpClient {
     path: string,
     headers: Record<string, string> = {}
   ): Promise<Response> {
-    return Promise.resolve(this.mockResponse('get', host, path, headers))
+    return await Promise.resolve(this.mockResponse('get', host, path, headers))
   }
 
   public static async post (
@@ -25,7 +25,7 @@ class TestHttpClient extends HttpClient {
     headers: Record<string, string> = {},
     body: Record<string, string> = {}
   ): Promise<Response> {
-    return Promise.resolve(this.mockResponse('post', host, path, headers, body))
+    return await Promise.resolve(this.mockResponse('post', host, path, headers, body))
   }
 
   public static async patch (
@@ -34,7 +34,7 @@ class TestHttpClient extends HttpClient {
     headers: Record<string, string> = {},
     body: Record<string, string> = {}
   ): Promise<Response> {
-    return Promise.resolve(this.mockResponse('patch', host, path, headers, body))
+    return await Promise.resolve(this.mockResponse('patch', host, path, headers, body))
   }
 
   public static async put (
@@ -43,7 +43,7 @@ class TestHttpClient extends HttpClient {
     headers: Record<string, string> = {},
     body: Record<string, string> = {}
   ): Promise<Response> {
-    return Promise.resolve(this.mockResponse('put', host, path, headers, body))
+    return await Promise.resolve(this.mockResponse('put', host, path, headers, body))
   }
 
   public static async delete (
@@ -51,7 +51,7 @@ class TestHttpClient extends HttpClient {
     path: string,
     headers: Record<string, string> = {}
   ): Promise<Response> {
-    return Promise.resolve(this.mockResponse('delete', host, path, headers))
+    return await Promise.resolve(this.mockResponse('delete', host, path, headers))
   }
 
   public static mockResponse (
@@ -69,12 +69,12 @@ class TestHttpClient extends HttpClient {
 }
 
 describe('HttpClient', () => {
-  let context: HttpClientContext = {
+  const context: HttpClientContext = {
     host: 'https://jsonplaceholder.typicode.com',
     headers: { Authorization: 'Bearer token' }
   }
 
-  let httpClient: TestHttpClient = new TestHttpClient(context.host, context.headers)
+  const httpClient: TestHttpClient = new TestHttpClient(context.host, context.headers)
 
   describe('.get', () => {
     it(
@@ -103,7 +103,7 @@ describe('HttpClient', () => {
           headers: { Authorization: 'Bearer otherToken' }
         }
 
-        const response = await httpClient.get( '/todos/1', otherContext)
+        const response = await httpClient.get('/todos/1', otherContext)
         const responseJson = await response.json()
 
         expect(responseJson).toEqual({
@@ -276,7 +276,7 @@ describe('HttpClient', () => {
           headers: { Authorization: 'Bearer otherToken' }
         }
 
-        const response = await httpClient.delete( '/todos/1', otherContext)
+        const response = await httpClient.delete('/todos/1', otherContext)
         const responseJson = await response.json()
 
         expect(responseJson).toEqual({
