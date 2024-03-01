@@ -1,16 +1,22 @@
 import DeviceToken from './DeviceToken'
 import NodeClient from '../net/NodeClient'
+import type HttpClient from '../net/HttpClient'
 import { type DeviceDescription } from './DeviceDescription'
-import { AUTHENTICATION_HOST, PAIR_PATH, SESSION_PATH } from '../constants'
+
+export const AUTHENTICATION_HOST: string = 'https://webapp-prod.cloud.remarkable.engineering'
 
 export default class Device {
   public static async pair (id: string, description: DeviceDescription, oneTimeCode: string): Promise<Device> {
-    const pairResponse = await NodeClient.post(
+    const httpClient = new NodeClient(
       AUTHENTICATION_HOST,
-      PAIR_PATH,
-      {},
-      { code: oneTimeCode, deviceID: id, deviceDesc: description }
+      {
+        code: oneTimeCode,
+        deviceID: id,
+        deviceDesc: description
+      }
     )
+
+    const pairResponse = await httpClient.post('/token/json/2/device/new', {})
 
     if (pairResponse.status !== 200) {
       throw new Error(`Failed to pair with Remarkable API: ${pairResponse.statusText}`)
@@ -21,6 +27,7 @@ export default class Device {
 
   public readonly id: string
   public readonly description: DeviceDescription
+  public readonly httpClient: HttpClient
 
   /**
    * Device Token, retrieved from device pairing and used to generate user sessions
@@ -39,15 +46,17 @@ export default class Device {
     this.id = id
     this.description = description
     this.pairToken = token
+
+    // TODO: add logic to pass a specific client
+    this.httpClient = new NodeClient(
+      AUTHENTICATION_HOST, {
+        Authorization: `Bearer ${this.pairToken.token}`
+      }
+    )
   }
 
   public async connect (): Promise<Device> {
-    const connectResponse = await NodeClient.post(
-      AUTHENTICATION_HOST,
-      SESSION_PATH,
-      { Authorization: `Bearer ${this.pairToken.token}` },
-      {}
-    )
+    const connectResponse = await this.httpClient.post('/token/json/2/user/new', {})
 
     if (connectResponse.status !== 200) {
       throw new Error(`Failed to connect with Remarkable API: ${connectResponse.statusText}`)

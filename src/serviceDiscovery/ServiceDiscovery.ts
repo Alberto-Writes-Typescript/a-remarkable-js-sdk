@@ -1,6 +1,8 @@
-import { SERVICE_DISCOVERY_HOST, STORAGE_DISCOVERY_PATH } from '../constants'
 import type Device from '../authentication/Device'
 import NodeClient from '../net/NodeClient'
+import type HttpClient from '../net/HttpClient'
+
+const SERVICE_DISCOVERY_HOST: string = 'https://service-manager-production-dot-remarkable-production.appspot.com'
 
 interface ServiceDiscoveryResponse {
   Status: 'OK' | string
@@ -9,19 +11,26 @@ interface ServiceDiscoveryResponse {
 
 export default class ServiceDiscovery {
   public readonly device: Device
-  public storageHost: string = SERVICE_DISCOVERY_HOST
+  public readonly httpClient: HttpClient
+
+  public storageHost?: string
 
   constructor (device: Device, storageHost: string | null = null) {
     this.device = device
+
+    // TODO: add logic to pass a specific client
+    this.httpClient = new NodeClient(
+      SERVICE_DISCOVERY_HOST,
+      {
+        Authorization: `Bearer ${this.device.sessionToken.token}`
+      }
+    )
+
     if (storageHost !== null) this.storageHost = storageHost
   }
 
   public async discoverStorageHost (): Promise<ServiceDiscovery> {
-    const discoveryResponse = await NodeClient.get(
-      SERVICE_DISCOVERY_HOST,
-      STORAGE_DISCOVERY_PATH,
-      { Authorization: `Bearer ${this.device.sessionToken.token}` }
-    )
+    const discoveryResponse = await this.httpClient.get('/service/json/1/document-storage?environment=production&group=auth0%7C5a68dc51cb30df3877a1d7c4&apiVer=2')
 
     if (discoveryResponse.status !== 200) {
       throw new Error(`Failed to find Remarkable API Storage Service: ${discoveryResponse.statusText}`)

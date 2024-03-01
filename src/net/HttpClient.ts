@@ -1,4 +1,4 @@
-import HttpClientContext from './HttpClientContext'
+import type HttpClientContext from './HttpClientContext'
 
 /**
  * HTTP Client abstract class
@@ -78,8 +78,8 @@ export default abstract class HttpClient {
     path: string,
     context: HttpClientContext = this.context
   ): Promise<Response> {
-    return (this.constructor as any)
-      .get(context.host || this.context.host, path, context.headers || this.context.headers)
+    return await this.classReference()
+      .get(context.host ?? this.context.host, path, context.headers ?? this.context.headers)
   }
 
   public async post (
@@ -87,8 +87,8 @@ export default abstract class HttpClient {
     body: Record<string, string> = {},
     context: HttpClientContext = this.context
   ): Promise<Response> {
-    return (this.constructor as any)
-      .post(context.host || this.context.host, path, context.headers || this.context.headers, body)
+    return await this.classReference()
+      .post(context.host ?? this.context.host, path, context.headers ?? this.context.headers, body)
   }
 
   public async patch (
@@ -96,8 +96,8 @@ export default abstract class HttpClient {
     body: Record<string, string> = {},
     context: HttpClientContext = this.context
   ): Promise<Response> {
-    return (this.constructor as any)
-      .patch(context.host || this.context.host, path, context.headers || this.context.headers, body)
+    return await this.classReference()
+      .patch(context.host ?? this.context.host, path, context.headers ?? this.context.headers, body)
   }
 
   public async put (
@@ -105,15 +105,24 @@ export default abstract class HttpClient {
     body: Record<string, string> = {},
     context: HttpClientContext = this.context
   ): Promise<Response> {
-    return (this.constructor as any)
-      .put(context.host || this.context.host, path, context.headers || this.context.headers, body)
+    return await this.classReference()
+      .put(context.host ?? this.context.host, path, context.headers ?? this.context.headers, body)
   }
 
   public async delete (
     path: string,
     context: HttpClientContext = this.context
   ): Promise<Response> {
-    return (this.constructor as any)
-      .delete(context.host || this.context.host, path, context.headers || this.context.headers)
+    return await this.classReference()
+      .delete(context.host ?? this.context.host, path, context.headers ?? this.context.headers)
+  }
+
+  /**
+   * Get the class reference, used to invoke the respective static
+   * methods of the HttpClient subclass the instance belongs to.
+   * @private
+   */
+  private classReference (): typeof HttpClient {
+    return this.constructor as typeof HttpClient
   }
 }
