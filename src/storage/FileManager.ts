@@ -37,7 +37,7 @@ export default class FileManager {
     const uploadResponse = await this.httpClient.post(
       '/doc/v2/files',
       // @ts-expect-error TODO: fix body type
-      { buffer },
+      buffer,
       {
         headers: {
           'content-type': contentType,

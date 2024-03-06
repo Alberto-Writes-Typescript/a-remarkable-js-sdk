@@ -3,9 +3,8 @@ import Device from '../../src/authentication/Device'
 import DeviceToken from '../../src/authentication/DeviceToken'
 import FileManager from '../../src/storage/FileManager'
 
-async function readFileAsArrayBuffer(filePath: string): Promise<ArrayBuffer> {
-  const data = await fs.readFile(filePath)
-  return data.buffer
+async function readFileAsArrayBuffer (filePath: string): Promise<ArrayBuffer> {
+  return await fs.readFile(filePath)
 }
 
 describe('FileManager', () => {
