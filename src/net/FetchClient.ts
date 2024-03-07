@@ -1,5 +1,6 @@
 import HttpClient from './HttpClient'
 import HttpClientRequest from './HttpClientRequest'
+import { type HttpClientRequestBodyPayload } from './HttpClientRequestBody'
 
 export default class FetchClient extends HttpClient {
   public static async get (
@@ -14,7 +15,7 @@ export default class FetchClient extends HttpClient {
     host: string,
     path: string,
     headers: Record<string, string> = {},
-    body: Record<string, string> = {}
+    body: HttpClientRequestBodyPayload | null = {}
   ): Promise<Response> {
     return await this.makeRequest(this.request(host, path, 'POST', headers, body))
   }
@@ -23,7 +24,7 @@ export default class FetchClient extends HttpClient {
     host: string,
     path: string,
     headers: Record<string, string> = {},
-    body: Record<string, string> = {}
+    body: HttpClientRequestBodyPayload | null = {}
   ): Promise<Response> {
     return await this.makeRequest(this.request(host, path, 'PATCH', headers, body))
   }
@@ -32,7 +33,7 @@ export default class FetchClient extends HttpClient {
     host: string,
     path: string,
     headers: Record<string, string> = {},
-    body: Record<string, string> = {}
+    body: HttpClientRequestBodyPayload | null = {}
   ): Promise<Response> {
     return await this.makeRequest(this.request(host, path, 'PUT', headers, body))
   }
@@ -54,7 +55,7 @@ export default class FetchClient extends HttpClient {
     path: string,
     method: string,
     headers: Record<string, string>,
-    body: Record<string, string> | null
+    body: HttpClientRequestBodyPayload | null = {}
   ): HttpClientRequest {
     return new HttpClientRequest(host, path, method, headers, body)
   }

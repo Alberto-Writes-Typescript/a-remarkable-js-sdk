@@ -33,14 +33,7 @@ describe('FetchClient', () => {
     it('performs POST request', async () => {
       const body = { title: 'foo', body: 'bar', userId: 1 }
 
-      const response = await FetchClient.post(
-        'https://jsonplaceholder.typicode.com',
-        '/posts',
-        {},
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        body
-      )
+      const response = await FetchClient.post('https://jsonplaceholder.typicode.com', '/posts', {}, body)
 
       expect(response.status).toBe(201)
     })
@@ -54,12 +47,8 @@ describe('FetchClient', () => {
       const headers = { Authorization: 'Bearer token' }
       const body: Record<string, string | number> = { title: 'foo', body: 'bar', userId: 1 }
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       await FetchClient.post('https://jsonplaceholder.typicode.com', '/posts', headers, body)
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       assertRequestPayload(mock, host, path, method, headers, body)
 
       restoreFetch()
@@ -96,8 +85,6 @@ describe('FetchClient', () => {
     it('performs PUT request', async () => {
       const body = { id: 1, title: 'foo', body: 'bar', userId: 1 }
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       const response = await FetchClient.put('https://jsonplaceholder.typicode.com', '/posts/1', {}, body)
 
       expect(response.status).toBe(200)
@@ -112,12 +99,8 @@ describe('FetchClient', () => {
       const headers = { Authorization: 'Bearer token' }
       const body = { id: 1, title: 'foo', body: 'bar', userId: 1 }
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       await FetchClient.put('https://jsonplaceholder.typicode.com', '/posts/1', headers, body)
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       assertRequestPayload(mock, host, path, method, headers, body)
 
       restoreFetch()
