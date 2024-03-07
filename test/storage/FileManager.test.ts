@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { promises as fs } from 'fs'
 import Device from '../../src/authentication/Device'
 import DeviceToken from '../../src/authentication/DeviceToken'

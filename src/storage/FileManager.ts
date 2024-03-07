@@ -36,14 +36,13 @@ export default class FileManager {
 
     const uploadResponse = await this.httpClient.post(
       '/doc/v2/files',
-      // @ts-expect-error TODO: fix body type
       buffer,
       {
         headers: {
+          Authorization: `Bearer ${this.device.sessionToken.token}`,
           'content-type': contentType,
           'rm-meta': fromByteArray(meta),
-          'rm-source': 'RoR-Browser',
-          Authorization: `Bearer ${this.device.sessionToken.token}`
+          'rm-source': 'RoR-Browser'
         }
       }
     )
