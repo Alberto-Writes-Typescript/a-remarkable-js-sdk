@@ -36,14 +36,7 @@ describe('NodeClient', () => {
     it('performs POST request', async () => {
       const body: Record<string, string | number> = { title: 'foo', body: 'bar', userId: 1 }
 
-      const response = await NodeClient.post(
-        'https://jsonplaceholder.typicode.com',
-        '/posts',
-        {},
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        body
-      )
+      const response = await NodeClient.post('https://jsonplaceholder.typicode.com', '/posts', {}, body)
 
       expect(response.status).toBe(201)
     })
@@ -95,8 +88,6 @@ describe('NodeClient', () => {
     it('performs PUT request', async () => {
       const body = { id: 1, title: 'foo', body: 'bar', userId: 1 }
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       const response = await NodeClient.put('https://jsonplaceholder.typicode.com', '/posts/1', {}, body)
 
       expect(response.status).toBe(200)
