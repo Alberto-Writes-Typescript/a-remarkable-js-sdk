@@ -4,6 +4,6 @@ const path = require('path');
 module.exports = {
 	preset: 'ts-jest',
 	rootDir: '..',
-	testEnvironment: 'jsdom',
+	testEnvironment: 'node',
 	setupFilesAfterEnv: ['./test/jest.setup.ts']
 }

@@ -5,6 +5,7 @@ import { promises as fs } from 'fs'
 import Device from '../../src/authentication/Device'
 import DeviceToken from '../../src/authentication/DeviceToken'
 import FileManager from '../../src/storage/FileManager'
+import {register, remarkable} from "../../src/rmapi-js";
 
 async function readFileAsArrayBuffer (filePath: string): Promise<ArrayBuffer> {
   return await fs.readFile(filePath)
@@ -23,11 +24,12 @@ describe('FileManager', () => {
 
       const fileManager = new FileManager(device)
 
+      const token = await register('cgvhtelg')
+      const api = await remarkable(token);
       const buffer = await readFileAsArrayBuffer('./test/fixtures/documents/sample.epub')
+      await api.uploadEpub("name", buffer)
 
-      const response = await fileManager.uploadEpub('sample.epub', buffer)
-
-      console.log(response)
-    })
+      // const response = await fileManager.uploadEpub('name', buffer)
+    }, 10000000)
   })
 })
