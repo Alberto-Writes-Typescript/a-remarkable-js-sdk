@@ -1,12 +1,6 @@
 import * as dotenv from 'dotenv'
 
 /**
- * JSDom Jest Environment does not support fetch API. This is a workaround to make it work in our tests.
- * More information: https://github.com/jsdom/jsdom/issues/1724
- */
-import 'whatwg-fetch'
-
-/**
  * Due to Polly.js deprecations, we use NodeHTTPAdapter instead of FetchAdapter.
  * When @pollyjs/adapter-fetch is running in a Node.js environment, it uses a polyfill
  * for fetch, which is not as reliable or feature-complete as the native fetch API in
@@ -31,7 +25,6 @@ dotenv.config({ path: '.env.test' })
  * Polly.js Configuration
  * ----------------------
  */
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 Polly.register(NodeHttpAdapter)
