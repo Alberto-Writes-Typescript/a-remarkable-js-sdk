@@ -1,6 +1,3 @@
-/**
- * @jest-environment node
- */
 import Device from '../../src/authentication/Device'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
 import DeviceToken from '../../src/authentication/DeviceToken'

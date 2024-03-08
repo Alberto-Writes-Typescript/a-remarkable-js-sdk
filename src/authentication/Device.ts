@@ -7,16 +7,16 @@ export const AUTHENTICATION_HOST: string = 'https://webapp-prod.cloud.remarkable
 
 export default class Device {
   public static async pair (id: string, description: DeviceDescription, oneTimeCode: string): Promise<Device> {
-    const httpClient = new NodeClient(
-      AUTHENTICATION_HOST,
+    const httpClient = new NodeClient(AUTHENTICATION_HOST)
+
+    const pairResponse = await httpClient.post(
+      '/token/json/2/device/new',
       {
         code: oneTimeCode,
         deviceID: id,
         deviceDesc: description
       }
     )
-
-    const pairResponse = await httpClient.post('/token/json/2/device/new', {})
 
     if (pairResponse.status !== 200) {
       throw new Error(`Failed to pair with Remarkable API: ${pairResponse.statusText}`)
@@ -47,12 +47,7 @@ export default class Device {
     this.description = description
     this.pairToken = token
 
-    // TODO: add logic to pass a specific client
-    this.httpClient = new NodeClient(
-      AUTHENTICATION_HOST, {
-        Authorization: `Bearer ${this.pairToken.token}`
-      }
-    )
+    this.httpClient = new NodeClient(AUTHENTICATION_HOST, { Authorization: `Bearer ${this.pairToken.token}` })
   }
 
   public async connect (): Promise<Device> {
