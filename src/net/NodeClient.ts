@@ -18,7 +18,32 @@ export default class NodeClient extends HttpClient {
     headers: Record<string, string> = {},
     body: HttpClientRequestBodyPayload | null = {}
   ): Promise<Response> {
-    return await this.makeRequest(this.request(host, path, 'POST', headers, body))
+    // return await this.makeRequest(this.request(host, path, 'POST', headers, body))
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    return await new Promise((resolve: Function, reject: Function) => {
+      const httpsRequest = https.request(
+        { hostname: host, path, method: 'POST', headers },
+        (response) => {
+          let responseData: string = ''
+
+          // eslint-disable-next-line no-return-assign
+          response.on('data', (chunk): string => responseData += chunk)
+
+          response.on('end', () =>
+            resolve(new Response(responseData, { status: response.statusCode, statusText: response.statusMessage }))
+          )
+        }
+      )
+
+      httpsRequest.on('error', (error) => { reject(error) })
+
+      if (body != null) {
+        // @ts-ignore
+        httpsRequest.write(body)
+      }
+
+      httpsRequest.end()
+    })
   }
 
   public static async patch (

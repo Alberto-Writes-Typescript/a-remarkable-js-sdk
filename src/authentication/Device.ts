@@ -2,6 +2,7 @@ import DeviceToken from './DeviceToken'
 import NodeClient from '../net/NodeClient'
 import type HttpClient from '../net/HttpClient'
 import { type DeviceDescription } from './DeviceDescription'
+import FetchClient from "../net/FetchClient";
 
 export const AUTHENTICATION_HOST: string = 'https://webapp-prod.cloud.remarkable.engineering'
 
@@ -48,7 +49,7 @@ export default class Device {
     this.pairToken = token
 
     // TODO: add logic to pass a specific client
-    this.httpClient = new NodeClient(
+    this.httpClient = new FetchClient(
       AUTHENTICATION_HOST, {
         Authorization: `Bearer ${this.pairToken.token}`
       }

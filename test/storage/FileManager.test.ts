@@ -23,13 +23,8 @@ describe('FileManager', () => {
       await device.connect()
 
       const fileManager = new FileManager(device)
-
-      const token = await register('cgvhtelg')
-      const api = await remarkable(token);
       const buffer = await readFileAsArrayBuffer('./test/fixtures/documents/sample.epub')
-      await api.uploadEpub("name", buffer)
-
-      // const response = await fileManager.uploadEpub('name', buffer)
+      await fileManager.uploadEpub('name', buffer)
     }, 10000000)
   })
 })

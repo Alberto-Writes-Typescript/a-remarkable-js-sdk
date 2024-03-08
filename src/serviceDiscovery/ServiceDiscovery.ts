@@ -1,6 +1,7 @@
 import type Device from '../authentication/Device'
 import NodeClient from '../net/NodeClient'
 import type HttpClient from '../net/HttpClient'
+import FetchClient from "../net/FetchClient";
 
 const SERVICE_DISCOVERY_HOST: string = 'https://service-manager-production-dot-remarkable-production.appspot.com'
 
@@ -19,7 +20,7 @@ export default class ServiceDiscovery {
     this.device = device
 
     // TODO: add logic to pass a specific client
-    this.httpClient = new NodeClient(
+    this.httpClient = new FetchClient(
       SERVICE_DISCOVERY_HOST,
       {
         Authorization: `Bearer ${this.device.sessionToken.token}`

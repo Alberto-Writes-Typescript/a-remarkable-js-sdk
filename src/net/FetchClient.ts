@@ -1,6 +1,6 @@
 import HttpClient from './HttpClient'
 import HttpClientRequest from './HttpClientRequest'
-import { type HttpClientRequestBodyPayload } from './HttpClientRequestBody'
+import HttpClientRequestBody, { type HttpClientRequestBodyPayload } from './HttpClientRequestBody'
 
 export default class FetchClient extends HttpClient {
   public static async get (
@@ -17,7 +17,15 @@ export default class FetchClient extends HttpClient {
     headers: Record<string, string> = {},
     body: HttpClientRequestBodyPayload | null = {}
   ): Promise<Response> {
-    return await this.makeRequest(this.request(host, path, 'POST', headers, body))
+    return await fetch(
+      host + path,
+      {
+        method: 'POST',
+        headers,
+        // @ts-ignore
+        body
+      }
+    )
   }
 
   public static async patch (
@@ -47,7 +55,14 @@ export default class FetchClient extends HttpClient {
   }
 
   private static async makeRequest (httpClientRequest: HttpClientRequest): Promise<Response> {
-    return await fetch(httpClientRequest.toRequest())
+    return await fetch(
+      httpClientRequest.url.toString(),
+      {
+        method: httpClientRequest.method,
+        headers: httpClientRequest.headers,
+        body: httpClientRequest.serializedBody
+      }
+    )
   }
 
   private static request (

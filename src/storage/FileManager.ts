@@ -6,7 +6,7 @@ import NodeClient from '../net/NodeClient'
 import { TextEncoder } from 'util'
 import FetchClient from "../net/FetchClient";
 
-export const SYNCHRONIZATION_HOST: string = 'https://internal.cloud.remarkable.com'
+export const SYNCHRONIZATION_HOST: string = 'internal.cloud.remarkable.com'
 
 export default class FileManager {
   public readonly device: Device
@@ -16,7 +16,7 @@ export default class FileManager {
     this.device = device
 
     // TODO: add logic to pass a specific client
-    this.httpClient = new FetchClient(
+    this.httpClient = new NodeClient(
       SYNCHRONIZATION_HOST, {
         Authorization: `Bearer ${this.device.sessionToken.token}`
       }
