@@ -1,6 +1,3 @@
-/**
- * @jest-environment node
- */
 import NodeClient from '../../src/net/NodeClient'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
 import { assertRequestPayload, mockHttpsRequest, restoreHttpsRequest } from '../helpers/httpsHelpers'

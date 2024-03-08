@@ -18,13 +18,7 @@ export default class ServiceDiscovery {
   constructor (device: Device, storageHost: string | null = null) {
     this.device = device
 
-    // TODO: add logic to pass a specific client
-    this.httpClient = new NodeClient(
-      SERVICE_DISCOVERY_HOST,
-      {
-        Authorization: `Bearer ${this.device.sessionToken.token}`
-      }
-    )
+    this.httpClient = new NodeClient(SERVICE_DISCOVERY_HOST, { Authorization: `Bearer ${this.device.sessionToken.token}` })
 
     if (storageHost !== null) this.storageHost = storageHost
   }

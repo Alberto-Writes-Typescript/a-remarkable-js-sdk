@@ -1,6 +1,6 @@
 import { Polly, type PollyConfig } from '@pollyjs/core'
 
-const DEFAULT_RECORDS_DIR: string = './test/records'
+const DEFAULT_RECORDS_DIR: string = './test/fixtures/http-records'
 const DEFAULT_POLLY_CONFIGURATION: PollyConfig = {
   adapters: ['node-http'],
   persister: 'fs'
