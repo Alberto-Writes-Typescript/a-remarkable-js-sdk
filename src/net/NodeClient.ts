@@ -51,7 +51,12 @@ export default class NodeClient extends HttpClient {
     // eslint-disable-next-line @typescript-eslint/ban-types
     return await new Promise((resolve: Function, reject: Function) => {
       const httpsRequest = https.request(
-        httpClientRequest.toHttpsRequestOptions(),
+        {
+          hostname: httpClientRequest.url.hostname,
+          path: httpClientRequest.url.pathname,
+          method: httpClientRequest.method,
+          headers: httpClientRequest.headers
+        },
         (response) => {
           let responseData: string = ''
 
@@ -66,7 +71,7 @@ export default class NodeClient extends HttpClient {
 
       httpsRequest.on('error', (error) => { reject(error) })
 
-      if (httpClientRequest.body != null) httpsRequest.write(httpClientRequest.serializedBody)
+      if (httpClientRequest.body != null) httpsRequest.write(httpClientRequest.body)
 
       httpsRequest.end()
     })
