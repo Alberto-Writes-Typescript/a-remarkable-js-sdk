@@ -1,4 +1,5 @@
 import HttpClientContext from './HttpClientContext'
+import { type HttpClientRequestBodyPayload } from './HttpClientRequestBody'
 
 /**
  * HTTP Client abstract class
@@ -37,7 +38,7 @@ export default abstract class HttpClient {
     host: string,
     path: string,
     headers: Record<string, string> = {},
-    body: Record<string, string> = {}
+    body: HttpClientRequestBodyPayload = {}
   ): Promise<Response> {
     throw new Error('HTTP Client does not implement post static method')
   }
@@ -46,7 +47,7 @@ export default abstract class HttpClient {
     host: string,
     path: string,
     headers: Record<string, string> = {},
-    body: Record<string, string> = {}
+    body: HttpClientRequestBodyPayload = {}
   ): Promise<Response> {
     throw new Error('HTTP Client does not implement patch static method')
   }
@@ -55,7 +56,7 @@ export default abstract class HttpClient {
     host: string,
     path: string,
     headers: Record<string, string> = {},
-    body: Record<string, string> = {}
+    body: HttpClientRequestBodyPayload = {}
   ): Promise<Response> {
     throw new Error('HTTP Client does not implement put static method')
   }
@@ -84,7 +85,7 @@ export default abstract class HttpClient {
 
   public async post (
     path: string,
-    body: Record<string, string> = {},
+    body: HttpClientRequestBodyPayload = {},
     context: HttpClientContext = this.context
   ): Promise<Response> {
     const requestContext: HttpClientContext = this.context.merge(context)
@@ -95,7 +96,7 @@ export default abstract class HttpClient {
 
   public async patch (
     path: string,
-    body: Record<string, string> = {},
+    body: HttpClientRequestBodyPayload = {},
     context: HttpClientContext = this.context
   ): Promise<Response> {
     const requestContext: HttpClientContext = this.context.merge(context)
@@ -106,7 +107,7 @@ export default abstract class HttpClient {
 
   public async put (
     path: string,
-    body: Record<string, string> = {},
+    body: HttpClientRequestBodyPayload = {},
     context: HttpClientContext = this.context
   ): Promise<Response> {
     const requestContext: HttpClientContext = this.context.merge(context)
