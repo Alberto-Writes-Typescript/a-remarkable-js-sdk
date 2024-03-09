@@ -1,4 +1,4 @@
-import type HttpClientContext from './HttpClientContext'
+import HttpClientContext from './HttpClientContext'
 
 /**
  * HTTP Client abstract class
@@ -71,7 +71,7 @@ export default abstract class HttpClient {
   readonly context: HttpClientContext
 
   constructor (host: string, headers: Record<string, string> = {}) {
-    this.context = { host, headers }
+    this.context = new HttpClientContext(host, headers)
   }
 
   public async get (
@@ -87,8 +87,10 @@ export default abstract class HttpClient {
     body: Record<string, string> = {},
     context: HttpClientContext = this.context
   ): Promise<Response> {
+    const requestContext: HttpClientContext = this.context.merge(context)
+
     return await this.classReference()
-      .post(context.host ?? this.context.host, path, context.headers ?? this.context.headers, body)
+      .post(requestContext.host, path, requestContext.headers, body)
   }
 
   public async patch (
@@ -96,8 +98,10 @@ export default abstract class HttpClient {
     body: Record<string, string> = {},
     context: HttpClientContext = this.context
   ): Promise<Response> {
+    const requestContext: HttpClientContext = this.context.merge(context)
+
     return await this.classReference()
-      .patch(context.host ?? this.context.host, path, context.headers ?? this.context.headers, body)
+      .patch(requestContext.host, path, requestContext.headers, body)
   }
 
   public async put (
@@ -105,16 +109,20 @@ export default abstract class HttpClient {
     body: Record<string, string> = {},
     context: HttpClientContext = this.context
   ): Promise<Response> {
+    const requestContext: HttpClientContext = this.context.merge(context)
+
     return await this.classReference()
-      .put(context.host ?? this.context.host, path, context.headers ?? this.context.headers, body)
+      .put(requestContext.host, path, requestContext.headers, body)
   }
 
   public async delete (
     path: string,
     context: HttpClientContext = this.context
   ): Promise<Response> {
+    const requestContext: HttpClientContext = this.context.merge(context)
+
     return await this.classReference()
-      .delete(context.host ?? this.context.host, path, context.headers ?? this.context.headers)
+      .delete(requestContext.host, path, requestContext.headers)
   }
 
   /**

@@ -10,7 +10,19 @@
  * @property {string} host - The host of the context. All client HTTP requests will be performed to this host.
  * @property {Headers} [headers] - The headers of the context. All client HTTP requests will be performed with these headers.
  */
-export default interface HttpClientContext {
+export default class HttpClientContext {
   readonly host?: string
   readonly headers?: Record<string, string>
+
+  constructor (host?: string, headers?: Record<string, string>) {
+    this.host = host
+    this.headers = headers
+  }
+
+  public merge (otherContext: HttpClientContext): HttpClientContext {
+    return new HttpClientContext(
+      otherContext.host ?? this.host,
+      { ...this.headers, ...otherContext.headers }
+    )
+  }
 }

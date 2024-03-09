@@ -1,5 +1,5 @@
 import HttpClient from '../../src/net/HttpClient'
-import type HttpClientContext from '../../src/net/HttpClientContext'
+import HttpClientContext from '../../src/net/HttpClientContext'
 
 /**
  * Test HTTP client used to test the behavior of HttpClient instances
@@ -69,10 +69,7 @@ class TestHttpClient extends HttpClient {
 }
 
 describe('HttpClient', () => {
-  const context: HttpClientContext = {
-    host: 'https://jsonplaceholder.typicode.com',
-    headers: { Authorization: 'Bearer token' }
-  }
+  const context = new HttpClientContext('https://jsonplaceholder.typicode.com', { Authorization: 'Bearer token' })
 
   const httpClient: TestHttpClient = new TestHttpClient(context.host, context.headers)
 
@@ -98,10 +95,7 @@ describe('HttpClient', () => {
       'if context is specified and host & headers are specified,' +
             'performs GET request with specified host and headers',
       async () => {
-        const otherContext: HttpClientContext = {
-          host: 'other',
-          headers: { Authorization: 'Bearer otherToken' }
-        }
+        const otherContext = new HttpClientContext('other', { Authorization: 'Bearer otherToken' })
 
         const response = await httpClient.get('/todos/1', otherContext)
         const responseJson = await response.json()
@@ -141,10 +135,7 @@ describe('HttpClient', () => {
       'if context is specified and host & headers are specified,' +
             'performs POST request with specified host and headers',
       async () => {
-        const otherContext: HttpClientContext = {
-          host: 'other',
-          headers: { Authorization: 'Bearer otherToken' }
-        }
+        const otherContext = new HttpClientContext('other', { Authorization: 'Bearer otherToken' })
         const body = { title: 'foo', body: 'bar' }
 
         const response = await httpClient.post('/posts', body, otherContext)
@@ -185,10 +176,7 @@ describe('HttpClient', () => {
       'if context is specified and host & headers are specified,' +
             'performs PATCH request with specified host and headers',
       async () => {
-        const otherContext: HttpClientContext = {
-          host: 'other',
-          headers: { Authorization: 'Bearer otherToken' }
-        }
+        const otherContext = new HttpClientContext('other', { Authorization: 'Bearer otherToken' })
         const body = { title: 'foo' }
 
         const response = await httpClient.patch('/posts', body, otherContext)
@@ -229,10 +217,7 @@ describe('HttpClient', () => {
       'if context is specified and host & headers are specified,' +
             'performs PUT request with specified host and headers',
       async () => {
-        const otherContext: HttpClientContext = {
-          host: 'other',
-          headers: { Authorization: 'Bearer otherToken' }
-        }
+        const otherContext = new HttpClientContext('other', { Authorization: 'Bearer otherToken' })
         const body = { title: 'foo', body: 'bar' }
 
         const response = await httpClient.put('/posts', body, otherContext)
@@ -271,10 +256,7 @@ describe('HttpClient', () => {
       'if context is specified and host & headers are specified,' +
             'performs DELETE request with specified host and headers',
       async () => {
-        const otherContext: HttpClientContext = {
-          host: 'other',
-          headers: { Authorization: 'Bearer otherToken' }
-        }
+        const otherContext = new HttpClientContext('other', { Authorization: 'Bearer otherToken' })
 
         const response = await httpClient.delete('/todos/1', otherContext)
         const responseJson = await response.json()
