@@ -6,6 +6,14 @@ import type HttpClient from '../net/HttpClient'
 import HttpClientContext from '../net/HttpClientContext'
 import { type FileTypeResult } from 'file-type'
 
+/**
+ * Response payload returned by reMarkable Cloud after uploading a file
+ */
+export interface UploadResponse {
+  docID: string
+  hash: string
+}
+
 export default class FileBuffer {
   /**
    * Creates a FileBuffer from a local file
@@ -22,12 +30,12 @@ export default class FileBuffer {
     return new FileBuffer(name, buffer, serviceManager)
   }
 
-  private uploadResponse?: never
   private httpClient?: HttpClient
-  private readonly fileType?: FileTypeResult
+  private uploadResponse?: UploadResponse
 
   private readonly name: string
   private readonly buffer: ArrayBuffer
+  private readonly fileType?: FileTypeResult
   private readonly serviceManager: ServiceManager
 
   constructor (name: string, buffer: ArrayBuffer, serviceManager: ServiceManager) {
@@ -37,30 +45,29 @@ export default class FileBuffer {
   }
 
   async upload (): Promise<unknown> {
-    const httpClient = await this.documentStorageHttpClient()
+    const httpClient = await this.internalCloudHttpClient()
 
-    // @ts-expect-error TODO: fix Response type definition
-    this.uploadResponse = await httpClient.post(
+    const response = await httpClient.post(
       '/doc/v2/files',
       this.buffer,
-      new HttpClientContext('https://internal.cloud.remarkable.com', {
+      new HttpClientContext(null, {
         'content-type': 'application/epub+zip', // await this.mimeType(),
         'rm-meta': this.encodedName,
         'rm-source': 'RoR-Browser'
       })
     )
 
-    // @ts-expect-error TODO: fix Response type definition
-    if (this.uploadResponse.status !== 201) {
-      // @ts-expect-error TODO: fix Response type definition
-      throw new Error(`Failed to find Remarkable API Storage Service: ${this.uploadResponse.statusText}`)
+    if (response.status !== 201) {
+      throw new Error(`Failed to find Remarkable API Storage Service: ${await response.text()}`)
     }
+
+    this.uploadResponse = await response.json() as UploadResponse
 
     return this.uploadResponse
   }
 
-  private async documentStorageHttpClient (): Promise<HttpClient> {
-    this.httpClient ||= await this.serviceManager.documentStorageHttpClient()
+  private async internalCloudHttpClient (): Promise<HttpClient> {
+    this.httpClient ||= await this.serviceManager.internalCloudHttpClient()
     return this.httpClient
   }
 
