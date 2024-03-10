@@ -46,6 +46,27 @@ export default class ServiceManager {
     return await this.serviceHttpClient('documentStorage')
   }
 
+  /**
+   * Returns `HttpClient` configured with host and header options to
+   * perform requests to the reMarkable internal API.
+   *
+   * This API endpoint is not a service per-se, but provides some similar
+   * utilities other services provide (such as file upload). To keep the
+   * logic to fetch endpoints consistent, this method encapsulates the
+   * endpoint logic as if it was another service.
+   */
+  public async internalCloudHttpClient (): Promise<HttpClient> {
+    return await new Promise((resolve, reject = () => {}) => {
+      resolve(
+        new NodeClient(
+          'https://internal.cloud.remarkable.com',
+          { Authorization: `Bearer ${this.device.sessionToken.token}` })
+      )
+
+      reject(new Error('Not implemented'))
+    })
+  }
+
   private async serviceHttpClient (service: string): Promise<HttpClient> {
     const discoveryResponse = await this.httpClient.get(REMARKABLE_API_SERVICES[service])
 
