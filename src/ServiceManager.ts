@@ -59,7 +59,7 @@ export default class ServiceManager {
     const discoveryPayload: ServiceManagerResponse = await discoveryResponse.json()
 
     return new NodeClient(
-      discoveryPayload.Host,
+      `https://${discoveryPayload.Host}`,
       { Authorization: `Bearer ${this.device.sessionToken.token}` }
     )
   }

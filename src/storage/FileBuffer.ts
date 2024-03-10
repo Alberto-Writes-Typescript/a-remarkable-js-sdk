@@ -1,50 +1,73 @@
 import { TextEncoder } from 'util'
+import { promises as fs } from 'fs'
 import { fromByteArray } from 'base64-js'
-import NodeClient from '../net/NodeClient'
+import type ServiceManager from '../ServiceManager'
 import type HttpClient from '../net/HttpClient'
-import type Device from '../authentication/Device'
-
-export const SYNCHRONIZATION_HOST: string = 'https://internal.cloud.remarkable.com'
+import HttpClientContext from '../net/HttpClientContext'
+import { type FileTypeResult } from 'file-type'
 
 export default class FileBuffer {
-  private readonly httpClient: HttpClient
+  /**
+   * Creates a FileBuffer from a local file
+   *
+   * Used to easily upload local files to reMarkable cloud
+   *
+   * @param {string} path
+   * @param {ServiceManager} serviceManager
+   */
+  static async fromLocalFile (path: string, serviceManager: ServiceManager): Promise<FileBuffer> {
+    const name = path.split('/').pop()
+    const buffer = await fs.readFile(path)
 
-  constructor (device: Device) {
-    this.device = device
-    this.httpClient = new NodeClient(SYNCHRONIZATION_HOST, { Authorization: `Bearer ${this.device.sessionToken.token}` })
+    return new FileBuffer(name, buffer, serviceManager)
   }
 
-  public async uploadEpub (name: string, fileBuffer: ArrayBuffer): Promise<unknown> {
-    return await this.uploadFile(name, fileBuffer, 'application/epub+zip')
+  private uploadResponse?: never
+  private httpClient?: HttpClient
+  private readonly fileType?: FileTypeResult
+
+  private readonly name: string
+  private readonly buffer: ArrayBuffer
+  private readonly serviceManager: ServiceManager
+
+  constructor (name: string, buffer: ArrayBuffer, serviceManager: ServiceManager) {
+    this.name = name
+    this.buffer = buffer
+    this.serviceManager = serviceManager
   }
 
-  private async uploadFile (
-    name: string,
-    buffer: ArrayBuffer,
-    contentType: `application/${'epub+zip' | 'pdf'}`
-  ): Promise<unknown> {
-    const encoder = new TextEncoder()
-    const meta = encoder.encode(JSON.stringify({ file_name: name }))
+  async upload (): Promise<unknown> {
+    const httpClient = await this.documentStorageHttpClient()
 
-    const uploadResponse = await this.httpClient.post(
+    // @ts-expect-error TODO: fix Response type definition
+    this.uploadResponse = await httpClient.post(
       '/doc/v2/files',
-      buffer,
-      {
-        headers: {
-          Authorization: `Bearer ${this.device.sessionToken.token}`,
-          'content-type': contentType,
-          'rm-meta': fromByteArray(meta),
-          'rm-source': 'RoR-Browser'
-        }
-      }
+      this.buffer,
+      new HttpClientContext('https://internal.cloud.remarkable.com', {
+        'content-type': 'application/epub+zip', // await this.mimeType(),
+        'rm-meta': this.encodedName,
+        'rm-source': 'RoR-Browser'
+      })
     )
 
-    if (uploadResponse.status !== 201) {
-      throw new Error(`Failed to find Remarkable API Storage Service: ${uploadResponse.statusText}`)
+    // @ts-expect-error TODO: fix Response type definition
+    if (this.uploadResponse.status !== 201) {
+      // @ts-expect-error TODO: fix Response type definition
+      throw new Error(`Failed to find Remarkable API Storage Service: ${this.uploadResponse.statusText}`)
     }
 
-    const uploadPayload: unknown = await uploadResponse.json()
+    return this.uploadResponse
+  }
 
-    return uploadPayload
+  private async documentStorageHttpClient (): Promise<HttpClient> {
+    this.httpClient ||= await this.serviceManager.documentStorageHttpClient()
+    return this.httpClient
+  }
+
+  private get encodedName (): string {
+    const encoder = new TextEncoder()
+    const namePayload = JSON.stringify({ file_name: this.name })
+    const encodedNamePayload = encoder.encode(namePayload)
+    return fromByteArray(encodedNamePayload)
   }
 }
