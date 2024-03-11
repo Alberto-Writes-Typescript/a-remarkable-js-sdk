@@ -1,6 +1,6 @@
 import Device from '../../src/authentication/Device'
 import DeviceToken from '../../src/authentication/DeviceToken'
-import FileBuffer from '../../src/storage/FileBuffer'
+import FileBuffer from '../../src/./internal/FileBuffer'
 import ServiceManager from '../../src/ServiceManager'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
 
