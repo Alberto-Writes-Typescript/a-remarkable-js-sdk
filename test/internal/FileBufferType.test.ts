@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs'
-import FileBufferType, { UnsupportedFileExtensionError } from '../../src/storage/FileBufferType'
+import FileBufferType, { UnsupportedFileExtensionError } from '../../src/./internal/FileBufferType'
 
 describe('FileBufferType', () => {
   it('if supported file extension buffer is provided, returns instance with its extension and mime type', async () => {
