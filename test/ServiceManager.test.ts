@@ -19,7 +19,23 @@ describe('ServiceManager', () => {
       const client = await serviceDiscovery.documentStorageHttpClient()
 
       expect(client).toBeInstanceOf(HttpClient)
-      expect(client.context.host).toBe('document-storage-production-dot-remarkable-production.appspot.com')
+      expect(client.context.host).toBe('https://document-storage-production-dot-remarkable-production.appspot.com')
+      expect(JSON.stringify(client.context.headers)).toBe(JSON.stringify({ Authorization: `Bearer ${device.sessionToken.token}` }))
+    }, 5000)
+  })
+
+  describe('.internalCloudHttpClient', () => {
+    it('if Device is connected, returns HttpClient instance with internal cloud configuration', async () => {
+      const device = new Device(process.env.SAMPLE_UUID, 'browser-chrome', new DeviceToken(process.env.SAMPLE_PAIR_TOKEN))
+
+      await device.connect()
+
+      const serviceDiscovery = new ServiceManager(device)
+
+      const client = await serviceDiscovery.internalCloudHttpClient()
+
+      expect(client).toBeInstanceOf(HttpClient)
+      expect(client.context.host).toBe('https://internal.cloud.remarkable.com')
       expect(JSON.stringify(client.context.headers)).toBe(JSON.stringify({ Authorization: `Bearer ${device.sessionToken.token}` }))
     }, 5000)
   })
