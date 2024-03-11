@@ -1,10 +1,18 @@
 import { TextEncoder } from 'util'
 import { promises as fs } from 'fs'
 import { fromByteArray } from 'base64-js'
-import type ServiceManager from '../ServiceManager'
+
+import FileBufferType from './FileBufferType'
 import type HttpClient from '../net/HttpClient'
+import type ServiceManager from '../ServiceManager'
 import HttpClientContext from '../net/HttpClientContext'
-import { type FileTypeResult } from 'file-type'
+
+export class FileNoUploadedError extends Error {
+  constructor () {
+    super('FileBuffer not uploaded to reMarkable Cloud')
+    this.name = 'FileNoUploadedError'
+  }
+}
 
 /**
  * Response payload returned by reMarkable Cloud after uploading a file
@@ -35,13 +43,35 @@ export default class FileBuffer {
 
   private readonly name: string
   private readonly buffer: ArrayBuffer
-  private readonly fileType?: FileTypeResult
+  private readonly type?: FileBufferType
   private readonly serviceManager: ServiceManager
 
   constructor (name: string, buffer: ArrayBuffer, serviceManager: ServiceManager) {
     this.name = name
     this.buffer = buffer
     this.serviceManager = serviceManager
+
+    this.type = new FileBufferType(buffer)
+  }
+
+  get uploaded (): boolean {
+    return this.uploadResponse != null
+  }
+
+  get remarkableDocumentId (): string {
+    if (this.uploaded) {
+      return this.uploadResponse.docID
+    } else {
+      throw new FileNoUploadedError()
+    }
+  }
+
+  get remarkableDocumentHash (): string {
+    if (this.uploaded) {
+      return this.uploadResponse.hash
+    } else {
+      throw new FileNoUploadedError()
+    }
   }
 
   async upload (): Promise<unknown> {
@@ -51,7 +81,7 @@ export default class FileBuffer {
       '/doc/v2/files',
       this.buffer,
       new HttpClientContext(null, {
-        'content-type': 'application/epub+zip', // await this.mimeType(),
+        'content-type': this.type.mimeType,
         'rm-meta': this.encodedName,
         'rm-source': 'RoR-Browser'
       })
