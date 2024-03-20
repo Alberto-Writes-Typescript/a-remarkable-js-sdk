@@ -78,8 +78,6 @@ export default class HashUrl {
   }
 
   async fetchContent (): Promise<string> {
-    if (!this.valid) throw new Error('Hash URL has expired')
-
     const response = await NodeClient.get(this.url.origin, this.url.pathname + this.url.search)
 
     if (response.status !== 200) {

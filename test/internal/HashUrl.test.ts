@@ -4,7 +4,7 @@ import HashUrl from '../../src/internal/HashUrl'
 import ServiceManager from '../../src/ServiceManager'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
 
-describe('RootFolder', () => {
+describe('HashUrl', () => {
   let serviceManager: ServiceManager = null
 
   setupHttpRecording()
@@ -26,18 +26,29 @@ describe('RootFolder', () => {
       const rootFolderHashUrl = await HashUrl.fromRootHash(serviceManager)
 
       // Regenerate when new requests are recorded
-      expect(rootFolderHashUrl.relativePath).toBe('a5e373954b79e3b5879dbc518799abe632534b2e8a675ba198552d4818ba6cdb')
+      expect(rootFolderHashUrl.relativePath).toBe(process.env.SAMPLE_FOLDER_HASH)
       expect(rootFolderHashUrl.url.host).toBe('storage.googleapis.com')
     }, 10000000)
   })
 
   describe('#fromHash', () => {
     it('given a Document / Folder hash, returns its HashUrl', async () => {
-      const rootFolderHashUrl = await HashUrl.fromHash('a5e373954b79e3b5879dbc518799abe632534b2e8a675ba198552d4818ba6cdb', serviceManager)
+      const rootFolderHashUrl = await HashUrl.fromHash(process.env.SAMPLE_FOLDER_HASH, serviceManager)
 
       // Regenerate when new requests are recorded
-      expect(rootFolderHashUrl.relativePath).toBe('a5e373954b79e3b5879dbc518799abe632534b2e8a675ba198552d4818ba6cdb')
+      expect(rootFolderHashUrl.relativePath).toBe(process.env.SAMPLE_FOLDER_HASH)
       expect(rootFolderHashUrl.url.host).toBe('storage.googleapis.com')
     }, 10000000)
+  })
+
+  describe('#fetchContent', () => {
+    it('returns hash raw content', async () => {
+      const rootFolderHashUrl = await HashUrl.fromHash(process.env.SAMPLE_FOLDER_HASH, serviceManager)
+
+      const content = await rootFolderHashUrl.fetchContent()
+
+      // Sample hash URL payload
+      expect(content).toContain('3\nfb6597077542383c2537bce943c81a985a2680bbbcd7ff559e78f2da21c63944:80000000:00f9663d-3d4a-4640-a755-3a0e66b44f1d:4:3943357')
+    })
   })
 })
