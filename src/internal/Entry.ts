@@ -1,52 +1,136 @@
-import type HashUrl from './HashUrl'
+import HashUrl from './HashUrl'
+import ServiceManager from '../ServiceManager'
 
-const DOCUMENT_TYPE = '0'
-const FOLDER_TYPE = '80000000'
+class EntryPayload {
+  hash: string
+  type: string
+  documentId: string
+  subfiles: number
+  size: bigint
 
-export default abstract class Entry {
-  static async fromFolderHashUrl (folderHashUrl: HashUrl): Promise<Entry[]> {
-    const content = await folderHashUrl.fetchContent()
-    return this.fromFolderHashUrlContent(content)
+  constructor (serializedEntry: string) {
+    const [hash, type, documentId, subfiles, size] = serializedEntry.split(':')
+
+    this.hash = hash
+    this.type = type
+    this.documentId = documentId
+
+    if (subfiles !== undefined) this.subfiles = parseInt(subfiles)
+    if (size !== undefined) this.size = BigInt(size)
   }
+}
 
-  static fromFolderHashUrlContent (folderHashUrlContent: string): Entry[] {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [schemaVersion, ...lines] = folderHashUrlContent.slice(0, -1).split('\n')
+export default class Entry {
+  static async initialize (serializedEntry: string | null, serviceManager: ServiceManager): Promise<RootEntry | CollectionEntry> {
+    // If no serialized entry is provided, it will fetch root folder entry (which has no serialized payload)
+    if (serializedEntry === null || serializedEntry === undefined) {
+      return await RootEntry.initialize(serviceManager)
+    }
 
-    // TODO: Add Schema Version Validation
-    return lines.map((line) => {
-      const [hash, type, documentId, subfiles, size] = line.split(':')
+    const entryPayload = new EntryPayload(serializedEntry)
 
-      switch (type) {
-        case DOCUMENT_TYPE:
-          console.log('me llama')
-          return new DocumentEntry(hash, documentId, BigInt(size))
-        case FOLDER_TYPE:
-          return new FolderEntry(hash, documentId, BigInt(size), parseInt(subfiles))
-        default:
-          throw new Error(`Unknown entry type: ${type}`)
-      }
-    })
+    const suffixRegex = /\.[a-z0-9]+$/i
+
+    // If entry's document ID is suffixed, seek matching Entry type
+    if (suffixRegex.test(entryPayload.documentId)) {
+    } else {
+      // If entry's document ID has no suffix, it is a collection entry
+      return await CollectionEntry.initialize(entryPayload, serviceManager)
+    }
   }
 
   hash: string
   id: string
-  size: bigint
+  content: any
+  serviceManager: ServiceManager
 
-  constructor (hash: string, id: string, size: bigint) {
+  constructor (hash: string, id: string, serviceManager: ServiceManager) {
     this.hash = hash
     this.id = id
-    this.size = size
+    this.serviceManager = serviceManager
+  }
+
+  async initialize (): Promise<Entry> {
+    const hashUrl = await HashUrl.fromHash(this.hash, this.serviceManager)
+    this.content = await hashUrl.fetchContent()
+    return this
   }
 }
 
-export class DocumentEntry extends Entry {}
+export class RootEntry {
+  static async initialize (serviceManager: ServiceManager): Promise<RootEntry> {
+    const hashUrl = await HashUrl.fromRootHash(serviceManager)
+    const serializedRootEntry = await hashUrl.fetchContent()
 
-export class FolderEntry extends Entry {
-  subfiles: number
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [schemaVersion, ...serializedEntries] = serializedRootEntry.slice(0, -1).split('\n')
 
-  constructor (hash: string, id: string, size: bigint, subfiles: number) {
-    super(hash, id, size)
-    this.subfiles = subfiles
+    const entries = await Promise.all(
+      serializedEntries.map(
+        async (serializedEntry) => await Entry.initialize(serializedEntry, serviceManager)
+      )
+    )
+
+    return new RootEntry(hashUrl.relativePath, parseInt(schemaVersion), entries)
   }
+
+  entries: Array<RootEntry | CollectionEntry>
+  hash: string
+  schemaVersion: number
+
+  constructor (
+    hash: string,
+    schemaVersion: number,
+    entries: Array<RootEntry | CollectionEntry>
+  ) {
+    this.hash = hash
+    this.schemaVersion = schemaVersion
+    this.entries = entries
+  }
+}
+
+export class CollectionEntry {
+  static async initialize (entryPayload: EntryPayload, serviceManager: ServiceManager): Promise<CollectionEntry> {
+    const hashUrl = await HashUrl.fromHash(entryPayload.hash, serviceManager)
+    const serializedCollectionEntry = await hashUrl.fetchContent()
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [schemaVersion, ...serializedEntries] = serializedCollectionEntry.slice(0, -1).split('\n')
+
+    const entries = await Promise.all(
+      serializedEntries.map(
+        async (serializedEntry) => await Entry.initialize(serializedEntry, serviceManager)
+      )
+    )
+
+    return new CollectionEntry(entryPayload, parseInt(schemaVersion), entries)
+  }
+
+  documentId: string
+  hash: string
+  entries: Array<RootEntry | CollectionEntry>
+  schemaVersion: number
+  size: bigint
+  subfiles: number
+  type: string
+
+  constructor (
+    entryPayload: EntryPayload,
+    schemaVersion: number,
+    entries: Array<RootEntry | CollectionEntry>
+  ) {
+    this.documentId = entryPayload.documentId
+    this.hash = entryPayload.hash
+    this.entries = entries
+    this.schemaVersion = schemaVersion
+    this.size = entryPayload.size
+    this.subfiles = entryPayload.subfiles
+    this.type = entryPayload.type
+  }
+}
+
+export class PdfCollectionEntry extends CollectionEntry {
+}
+
+export class ePubCollectionEntry extends CollectionEntry {
 }
