@@ -26,24 +26,24 @@ describe('HashUrl', () => {
       const rootFolderHashUrl = await HashUrl.fromRootHash(serviceManager)
 
       // Regenerate when new requests are recorded
-      expect(rootFolderHashUrl.relativePath).toBe(process.env.SAMPLE_FOLDER_HASH)
+      expect(rootFolderHashUrl.relativePath).toBe(process.env.SAMPLE_ROOT_FOLDER_HASH)
       expect(rootFolderHashUrl.url.host).toBe('storage.googleapis.com')
     }, 10000000)
   })
 
   describe('#fromHash', () => {
     it('given a Document / Folder hash, returns its HashUrl', async () => {
-      const rootFolderHashUrl = await HashUrl.fromHash(process.env.SAMPLE_FOLDER_HASH, serviceManager)
+      const rootFolderHashUrl = await HashUrl.fromHash(process.env.SAMPLE_ROOT_FOLDER_HASH, serviceManager)
 
       // Regenerate when new requests are recorded
-      expect(rootFolderHashUrl.relativePath).toBe(process.env.SAMPLE_FOLDER_HASH)
+      expect(rootFolderHashUrl.relativePath).toBe(process.env.SAMPLE_ROOT_FOLDER_HASH)
       expect(rootFolderHashUrl.url.host).toBe('storage.googleapis.com')
     }, 10000000)
   })
 
   describe('#fetchContent', () => {
     it('returns hash raw content', async () => {
-      const rootFolderHashUrl = await HashUrl.fromHash(process.env.SAMPLE_FOLDER_HASH, serviceManager)
+      const rootFolderHashUrl = await HashUrl.fromHash(process.env.SAMPLE_ROOT_FOLDER_HASH, serviceManager)
 
       const content = await rootFolderHashUrl.fetchContent()
 

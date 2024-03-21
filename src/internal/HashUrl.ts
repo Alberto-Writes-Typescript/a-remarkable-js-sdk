@@ -62,7 +62,6 @@ export default class HashUrl {
 
   expires: Date
   method: 'GET' | 'PUT' | 'PATCH'
-  rawContent?: string = null
   relativePath: string
   url: URL
 
@@ -78,12 +77,24 @@ export default class HashUrl {
   }
 
   async fetchContent (): Promise<string> {
+    const response = await this.fetchResponse()
+
+    return await response.text()
+  }
+
+  async fetchBuffer (): Promise<ArrayBuffer> {
+    const response = await this.fetchResponse()
+
+    return await response.arrayBuffer()
+  }
+
+  private async fetchResponse (): Promise<Response> {
     const response = await NodeClient.get(this.url.origin, this.url.pathname + this.url.search)
 
     if (response.status !== 200) {
       throw new Error(`Failed to fetch Remarkable API file hash: ${await response.text()}`)
     }
 
-    return await response.text()
+    return response
   }
 }
