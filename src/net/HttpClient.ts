@@ -79,8 +79,10 @@ export default abstract class HttpClient {
     path: string,
     context: HttpClientContext = this.context
   ): Promise<Response> {
+    const requestContext: HttpClientContext = this.context.merge(context)
+
     return await this.classReference()
-      .get(context.host ?? this.context.host, path, context.headers ?? this.context.headers)
+      .get(requestContext.host, path, requestContext.headers)
   }
 
   public async post (
