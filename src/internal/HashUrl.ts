@@ -3,32 +3,35 @@ import type ServiceManager from '../ServiceManager'
 import NodeClient from '../net/NodeClient'
 
 /**
- * Error thrown when request to fetch `hash` signed download URL fails.
- *
- * Request takes place during `HashUrl` initialization.
+ * Error thrown when request to fetch `hash` download URL fails.
  */
 export class HashPathRequestError extends Error {}
 
 /**
- * Error thrown when request to fetch `HashUrl` content fails.
+ * Error thrown when request to fetch `hash` content fails.
  */
 export class HashContentRequestError extends Error {}
 
 /**
- * Error thrown when an invalid method is provided to the `HashUrl` class.
+ * Error thrown when `hash` download URL method is not supported.
  */
 export class InvalidHashUrlMethodError extends Error {}
 
 /**
- * Error thrown when trying to fetch the content of a `HashUrl` object whole link has expired.
+ * Error thrown when `hash` download URL has expired.
  */
 export class ExpiredHashUrlError extends Error {}
 
 /**
- * Response payload of the reMarkable Cloud API `downloads` endpoint.
+ * reMarkable API `/downloads` endpoint response payload
  *
- * Represents a signed URL to access the contents of the `Document` or
- * `Folder` whose `string` `hash` was provided in the endpoint request.
+ * Represents the URL to access the content of a `hash`.
+ *
+ * Download URLs are signed. The `hash` content is accessible
+ * through an HTTP request to its `url` with the `method` specified
+ * (no authentication required).
+ *
+ * Once the `expires` date is reached, the URL is no longer valid.
  */
 export interface HashPathPayload {
   expires: string
@@ -38,14 +41,27 @@ export interface HashPathPayload {
 }
 
 /**
- * Models the signed URL to access the contents of a `Document` or `Folder` `Entries`.
+ * Represents the URL to access the content of a `hash`.
+ *
+ * A `hash` is a string which uniquely identifies a piece of information in the
+ * reMarkable cloud. A piece of information can be a `Document`, a `Folder`,
+ * metadata associated to a `Document` or a `Folder`, etc.
+ *
+ * To access the content of a `hash`, the reMarkable API provides a `/downloads`
+ * endpoint. This endpoint returns the download URL for a given `hash`. Download
+ * URLs are signed URLs with an expiration date. When performing an HTTP request
+ * to the download URL, the content of the `hash` is returned. Once the expiration
+ * date is reached, the URL is no longer valid, requiring a new request to the
+ * `/downloads` endpoint to get a new download URL.
+ *
+ * The `HashUrl` class provides an interface to download the content of a `hash`.
  */
 export default class HashUrl {
   /**
-   * Given a `string` `hash`, representing a `Document` of `Folder`, returns its `HashUrl`.
+   * Returns `HashUrl` for a given `hash`.
    *
-   * @param hash
-   * @param serviceManager
+   * @param {string} hash
+   * @param {ServiceManager} serviceManager
    */
   static async fromHash (hash: string, serviceManager: ServiceManager): Promise<HashUrl> {
     const httpClient: HttpClient = await serviceManager.internalCloudHttpClient()
@@ -63,19 +79,17 @@ export default class HashUrl {
   }
 
   /**
-   * Return the `HashUrl` for the root folder.
+   * Returns `HashUrl` for the `hash` associated to the root folder.
    *
-   * The root folder is a special folder identifier with the `root` relative path.
-   *
-   * To get its `HashUrl` it is required to first fetch the `string` `hash`
-   * associated to the root folder, and then the `HashUrl` of that `hash`.
+   * The root folder represents the root path of the reMarkable cloud storage.
    *
    * @param {ServiceManager} serviceManager
    */
   static async fromRootHash (serviceManager: ServiceManager): Promise<HashUrl> {
     // Fetch the `hash` string associated to the `root` folder
     const urlForRootHash = await this.fromHash('root', serviceManager)
-    const rootHash = await urlForRootHash.fetchText()
+    const rootHashResponse = await urlForRootHash.fetch()
+    const rootHash = await rootHashResponse.text()
 
     // And then extract the `HashUrl` from the actual root `hash`
     return await this.fromHash(rootHash, serviceManager)
@@ -93,18 +107,12 @@ export default class HashUrl {
     this.url = new URL(hashPathPayload.url)
   }
 
-  get valid (): boolean {
-    return this.expires.getTime() > (new Date()).getTime()
+  get expired (): boolean {
+    return this.expires.getTime() < (new Date()).getTime()
   }
 
-  async fetchText (): Promise<string> {
-    const response = await this.fetch()
-
-    return await response.text()
-  }
-
-  private async fetch (): Promise<Response> {
-    if (!this.valid) throw new ExpiredHashUrlError(`Error during hashUrl ${this.relativePath} content download request: link has expired`)
+  async fetch (): Promise<Response> {
+    if (this.expired) throw new ExpiredHashUrlError(`Error during hashUrl ${this.relativePath} content download request: link has expired`)
 
     let response = null
 
