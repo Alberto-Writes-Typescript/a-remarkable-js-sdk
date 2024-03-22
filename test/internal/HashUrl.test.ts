@@ -4,11 +4,11 @@ import HashUrl, { ExpiredHashUrlError, type HashPathPayload } from '../../src/in
 import ServiceManager from '../../src/ServiceManager'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
 
-function disableHashUrlValidations (): jest.SpyInstance {
-  return jest.spyOn(HashUrl.prototype, 'valid', 'get').mockReturnValue(true)
+function disableHashUrlExpiration (): jest.SpyInstance {
+  return jest.spyOn(HashUrl.prototype, 'expired', 'get').mockReturnValue(false)
 }
 
-function enableHashUrlValidations (spy: jest.SpyInstance): void {
+function enableHashUrlExpiration (spy: jest.SpyInstance): void {
   spy.mockRestore()
 }
 
@@ -29,9 +29,9 @@ describe('HashUrl', () => {
     serviceManager = new ServiceManager(device)
   })
 
-  describe('#fromRootHash', () => {
+  describe('static fromRootHash', () => {
     it('returns root folder HashUrl', async () => {
-      const spy: jest.SpyInstance = disableHashUrlValidations()
+      const spy: jest.SpyInstance = disableHashUrlExpiration()
 
       const rootFolderHashUrl = await HashUrl.fromRootHash(serviceManager)
 
@@ -40,13 +40,13 @@ describe('HashUrl', () => {
       expect(rootFolderHashUrl.url.host).toBe('storage.googleapis.com')
       expect(rootFolderHashUrl.method).toBe('GET')
 
-      enableHashUrlValidations(spy)
+      enableHashUrlExpiration(spy)
     })
   })
 
-  describe('#fromHash', () => {
-    it('given a Document / Folder hash, returns its HashUrl', async () => {
-      const spy: jest.SpyInstance = disableHashUrlValidations()
+  describe('static fromHash', () => {
+    it('given a hash, returns its HashUrl', async () => {
+      const spy: jest.SpyInstance = disableHashUrlExpiration()
 
       const folderHashUrl = await HashUrl.fromHash(process.env.SAMPLE_FOLDER_HASH, serviceManager)
 
@@ -55,25 +55,26 @@ describe('HashUrl', () => {
       expect(folderHashUrl.url.host).toBe('storage.googleapis.com')
       expect(folderHashUrl.method).toBe('GET')
 
-      enableHashUrlValidations(spy)
+      enableHashUrlExpiration(spy)
     })
   })
 
-  describe('#fetchText', () => {
-    it('given a Document / Folder HashUrl, returns hash raw content', async () => {
-      const spy: jest.SpyInstance = disableHashUrlValidations()
+  describe('fetch', () => {
+    it('given a HashUrl, returns content download response', async () => {
+      const spy: jest.SpyInstance = disableHashUrlExpiration()
 
       const rootFolderHashUrl = await HashUrl.fromHash(process.env.SAMPLE_ROOT_FOLDER_HASH, serviceManager)
 
-      const content = await rootFolderHashUrl.fetchText()
+      const response = await rootFolderHashUrl.fetch()
+      const content = await response.text()
 
       // Sample hash URL payload
       expect(content).toContain('3\nfb6597077542383c2537bce943c81a985a2680bbbcd7ff559e78f2da21c63944:80000000:00f9663d-3d4a-4640-a755-3a0e66b44f1d:4:3943357')
 
-      enableHashUrlValidations(spy)
+      enableHashUrlExpiration(spy)
     })
 
-    it('given an expired Document / Folder HashUrl, throws expired URL error', async () => {
+    it('given an expired HashUrl, throws expired URL error', async () => {
       const hashPathPayload: HashPathPayload = {
         expires: '2021-09-01T00:00:00Z',
         method: 'GET',
@@ -83,7 +84,7 @@ describe('HashUrl', () => {
 
       const rootFolderHashUrl = new HashUrl(hashPathPayload)
 
-      await expect(rootFolderHashUrl.fetchText()).rejects.toThrow(ExpiredHashUrlError)
+      await expect(rootFolderHashUrl.fetch()).rejects.toThrow(ExpiredHashUrlError)
     })
   })
 })
