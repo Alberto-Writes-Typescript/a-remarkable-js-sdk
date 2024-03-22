@@ -28,6 +28,9 @@ jobs:
         run: |
           echo SAMPLE_UUID=${{ secrets.SAMPLE_UUID }} >> .env.test
           echo SAMPLE_PAIR_TOKEN=${{ secrets.SAMPLE_PAIR_TOKEN }} >> .env.test
+          echo SAMPLE_ROOT_HASH=${{ secrets.SAMPLE_ROOT_HASH }} >> .env.test
+          echo SAMPLE_ROOT_FOLDER_HASH=${{ secrets.SAMPLE_ROOT_FOLDER_HASH }} >> .env.test
+          echo SAMPLE_FOLDER_HASH=${{ secrets.SAMPLE_FOLDER_HASH }} >> .env.test
 
       - name: Install Dependencies
         run: yarn install --pure-lockfile
