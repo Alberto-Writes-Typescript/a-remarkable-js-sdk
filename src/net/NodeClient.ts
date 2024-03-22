@@ -50,12 +50,16 @@ export default class NodeClient extends HttpClient {
   private static async makeRequest (httpClientRequest: HttpClientRequest): Promise<Response> {
     // eslint-disable-next-line @typescript-eslint/ban-types
     return await new Promise((resolve: Function, reject: Function) => {
+      let path = httpClientRequest.url.pathname
+
+      if (httpClientRequest.url.search != null) path += httpClientRequest.url.search
+
       const httpsRequest = https.request(
         {
-          hostname: httpClientRequest.url.hostname,
-          path: httpClientRequest.url.pathname,
           method: httpClientRequest.method,
-          headers: httpClientRequest.headers
+          hostname: httpClientRequest.url.hostname,
+          path,
+          headers: httpClientRequest.headers,
         },
         (response) => {
           let responseData: string = ''
