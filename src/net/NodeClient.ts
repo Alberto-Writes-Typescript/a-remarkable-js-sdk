@@ -59,7 +59,7 @@ export default class NodeClient extends HttpClient {
           method: httpClientRequest.method,
           hostname: httpClientRequest.url.hostname,
           path,
-          headers: httpClientRequest.headers,
+          headers: httpClientRequest.headers
         },
         (response) => {
           let responseData: string = ''
