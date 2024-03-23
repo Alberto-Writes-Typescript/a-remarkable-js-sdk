@@ -43,5 +43,5 @@ build({
 	...CONFIG,
 	format: 'esm',
 	outfile: path.join(process.cwd(), '/dist/index.esm.js'),
-	platform: 'neutral'
+	platform: 'node'
 })
