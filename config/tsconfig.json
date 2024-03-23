@@ -109,5 +109,5 @@
   // Don't transpile node_modules, anything in the dist/ directory, or any test files with the *.test.ts filename structure.
   "exclude": ["../node_modules", "../dist"],
   // Set of files Typescript will apply type-checking to. This line also tells ESLint which files to lint
-  "include": ["../src/**/*.ts", "../test/**/*.test.ts"]
+  "include": ["../src/**/*.ts", "../test/**/*.test.ts", "../scripts/**/*.ts"]
 }
