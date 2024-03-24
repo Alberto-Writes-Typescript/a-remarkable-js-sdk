@@ -4,6 +4,8 @@
   "description": "Simple project to define a JavasScript library (with TypeScript) to interact with the Remarkable API.",
   "scripts": {
     "test": "jest --config config/jest.config.js",
+    "build:tsup": "tsup-node --config config/tsup.config.ts  --tsconfig config/tsconfig.json",
+    "build": "yarn build:tsup",
     "lint": "yarn run eslint src test -c config/.eslintrc --ignore-path config/.eslintignore",
     "lint:fix": "yarn run eslint src test -c config/.eslintrc --ignore-path config/.eslintignore --fix"
   },
@@ -35,6 +37,7 @@
     "npm-dts": "^1.3.12",
     "path": "^0.12.7",
     "ts-jest": "^29.1.2",
+    "tsup": "^8.0.2",
     "typescript": "^5.3.3"
   }
 }
