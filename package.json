@@ -4,8 +4,6 @@
   "description": "Simple project to define a JavasScript library (with TypeScript) to interact with the Remarkable API.",
   "scripts": {
     "test": "jest --config config/jest.config.js",
-    "build:esbuild": "node config/esbuild.config.js",
-    "build": "yarn build:esbuild",
     "lint": "yarn run eslint src test -c config/.eslintrc --ignore-path config/.eslintignore",
     "lint:fix": "yarn run eslint src test -c config/.eslintrc --ignore-path config/.eslintignore --fix"
   },
@@ -27,7 +25,6 @@
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
     "dotenv": "^16.4.5",
-    "esbuild": "^0.20.0",
     "eslint": "^8.57.0",
     "eslint-config-standard-with-typescript": "^43.0.1",
     "eslint-plugin-import": "^2.25.2",
