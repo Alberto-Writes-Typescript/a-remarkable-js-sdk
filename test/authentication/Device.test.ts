@@ -29,13 +29,13 @@ describe('Device', () => {
       async () => {
         const device = new Device(
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          process.env.SAMPLE_UUID!, 'browser-chrome', new DeviceToken(process.env.SAMPLE_PAIR_TOKEN!)
+          process.env.SAMPLE_UUID, 'browser-chrome', new DeviceToken(process.env.SAMPLE_PAIR_TOKEN)
         )
 
         await device.connect()
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        expect(device.sessionToken.deviceId).toBe(process.env.SAMPLE_UUID!)
+        expect(device.sessionToken.deviceId).toBe(process.env.SAMPLE_UUID)
         expect(device.sessionToken.deviceDescription).toBe('browser-chrome')
       },
       30000
