@@ -7,12 +7,15 @@
   ],
   "parserOptions": {
     "project": "./tsconfig.json",
-    "tsconfigRootDir": "./config",
-
+    "tsconfigRootDir": "./config"
   },
   "parser": "@typescript-eslint/parser",
   "plugins": [
     "@typescript-eslint"
   ],
-  "root": true
+  "root": true,
+  "rules": {
+    "@typescript-eslint/prefer-nullish-coalescing": "off",
+    "@typescript-eslint/strict-boolean-expressions": "off"
+  }
 }
