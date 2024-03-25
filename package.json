@@ -4,7 +4,10 @@
   "description": "Simple project to define a JavasScript library (with TypeScript) to interact with the Remarkable API.",
   "scripts": {
     "test:setup": " npx ts-node --project ./config/tsconfig.json scripts/regenerateTestData.ts",
-    "test": "jest --config config/jest.config.js",
+    "test:unit": "jest --config config/jest.config.js",
+    "test:unit:without-file-buffer": "jest --config config/jest.config.js --testPathIgnorePatterns test/internal/FileBuffer.test.ts",
+    "test:unit:file-buffer": "jest --config config/jest.config.js test/internal/FileBuffer.test.ts",
+    "test": "yarn run test:unit",
     "build:tsup": "tsup-node --config config/tsup.config.ts  --tsconfig config/tsconfig.json",
     "build": "yarn build:tsup",
     "lint:eslint": "yarn run eslint src test -c config/.eslintrc --ignore-path config/.eslintignore",
