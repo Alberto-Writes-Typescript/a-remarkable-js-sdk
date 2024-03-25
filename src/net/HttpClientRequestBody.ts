@@ -4,7 +4,7 @@
 export class InvalidHttpBodyError extends Error {
   constructor (payload: unknown) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    super(`Http body payload ${payload} of kind ${payload.constructor.name} is not supported. Supported types are: Object, ArrayBuffer, Buffer, String.`)
+    super(`Http body payload of kind ${payload.constructor.name} is not supported. Supported types are: Object, ArrayBuffer, Buffer, String.`)
     this.name = 'InvalidHttpBodyError'
   }
 }
