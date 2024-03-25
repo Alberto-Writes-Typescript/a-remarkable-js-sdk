@@ -69,7 +69,7 @@ describe('HashUrl', () => {
       const content = await response.text()
 
       // Sample hash URL payload
-      expect(content).toContain('3\nfb6597077542383c2537bce943c81a985a2680bbbcd7ff559e78f2da21c63944:80000000:00f9663d-3d4a-4640-a755-3a0e66b44f1d:4:3943357')
+      expect(content).toContain('3\nbbfbb64f45915b76df0aad9953531ed89208efa7863419828584d475c73529e5:80000000:0096011d-35ef-4993-a613-e2b7b646bbae:4:15125')
 
       enableHashUrlExpiration(spy)
     })
