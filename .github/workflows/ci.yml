@@ -59,5 +59,8 @@ jobs:
           path: ~/.cache/eslint/
           key: ${{ runner.os }}-eslint-${{ hashFiles('**/package-lock.json', '**/.eslintrc') }}
 
-      - name: Run tests
-        run: yarn lint --cache --cache-strategy content --cache-location ~/.cache/eslint/current
+      - name: Run TypeScript Type Checking
+        run: yarn lint:tsc
+
+      - name: Run ESLint
+        run: yarn lint:eslint --cache --cache-strategy content --cache-location ~/.cache/eslint/current
