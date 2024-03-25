@@ -6,8 +6,9 @@
     "test": "jest --config config/jest.config.js",
     "build:tsup": "tsup-node --config config/tsup.config.ts  --tsconfig config/tsconfig.json",
     "build": "yarn build:tsup",
-    "lint": "yarn run eslint src test -c config/.eslintrc --ignore-path config/.eslintignore",
-    "lint:fix": "yarn run eslint src test -c config/.eslintrc --ignore-path config/.eslintignore --fix"
+    "lint:eslint": "yarn run eslint src test -c config/.eslintrc --ignore-path config/.eslintignore",
+    "lint:tsc": "tsc --noEmit -p ./config",
+    "lint": "yarn run lint:eslint && yarn run lint:tsc"
   },
   "keywords": [],
   "author": "",
