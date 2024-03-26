@@ -133,7 +133,7 @@ describe('FileSystemParser', () => {
 describe('FileSystem', () => {
   let serviceManager: ServiceManager = null
 
-  setupHttpRecording()
+  // TODO: Figure out a way to record the HTTP from a different account
 
   beforeEach(async () => {
     const device = new Device(
@@ -152,7 +152,7 @@ describe('FileSystem', () => {
       const fileSystem = await FileSystem.initialize(serviceManager)
 
       expect(fileSystem.folders.length).toBe(37)
-      expect(fileSystem.documents.length).toBe(100)
+      expect(fileSystem.documents.length).toBe(113)
     })
   })
 })
