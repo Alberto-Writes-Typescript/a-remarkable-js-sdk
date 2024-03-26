@@ -2,7 +2,6 @@ import Device from '../../src/authentication/Device'
 import DeviceToken from '../../src/authentication/DeviceToken'
 import FileSystem, { type DocumentPayload, FileSystemParser, type FolderPayload } from '../../src/internal/FileSystem'
 import ServiceManager from '../../src/ServiceManager'
-import { setupHttpRecording } from '../helpers/pollyHelpers'
 
 describe('FileSystemParser', () => {
   /**
