@@ -1,7 +1,12 @@
 {
   "name": "a-remarkable-js-sdk",
-  "version": "1.0.0",
-  "description": "Simple project to define a JavasScript library (with TypeScript) to interact with the Remarkable API.",
+  "description": "A reMarkable Cloud API SDK written in Typescript",
+  "version": "0.1.0",
+  "author": "Alberto Hernandez Cerezo <pascu216@gmail.com>",
+  "license": "ISC",
+  "keywords": [
+    "remarkable", "SDK", "API", "typescript", "reMarkable Cloud API"
+  ],
   "scripts": {
     "test:setup": " npx ts-node --project ./config/tsconfig.json scripts/regenerateTestData.ts",
     "test:unit": "jest --config config/jest.config.js",
@@ -14,9 +19,6 @@
     "lint:tsc": "tsc --noEmit -p ./config",
     "lint": "yarn run lint:eslint && yarn run lint:tsc"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "base64-js": "^1.5.1",
     "jwt-decode": "^4.0.0",
