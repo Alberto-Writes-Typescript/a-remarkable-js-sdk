@@ -1,7 +1,15 @@
 {
   "name": "a-remarkable-js-sdk",
   "version": "0.1.0",
-  "description": "Simple project to define a JavasScript library (with TypeScript) to interact with the Remarkable API.",
+  "description": "a reMarkable Cloud API wrapper written in TypeScript",
+  "keywords": ["reMarkable", "reMarkable Cloud", "pdf", "ePub", "api"],
+  "author": "Alberto Hernandez Cerezo <pascu216@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Alberto-Writes-Typescript/a-remarkable-js-sdk"
+  },
+  "bugs": "https://github.com/Alberto-Writes-Typescript/a-remarkable-js-sdk/issues",
   "type": "module",
   "main": "dist/index.js",
   "exports": {
@@ -24,9 +32,6 @@
     "lint:tsc": "tsc --noEmit -p ./config",
     "lint": "yarn run lint:eslint && yarn run lint:tsc"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "base64-js": "^1.5.1",
     "jwt-decode": "^4.0.0",
