@@ -1,9 +1,8 @@
-const path = require('path');
-
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
-module.exports = {
+const config = {
 	preset: 'ts-jest',
 	rootDir: '..',
 	testEnvironment: 'node',
 	setupFilesAfterEnv: ['./test/jest.setup.ts']
 }
+
+export default config
