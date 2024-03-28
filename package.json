@@ -20,6 +20,7 @@
     },
     "./package.json": "./package.json"
   },
+  "files": ["dist"],
   "scripts": {
     "test:setup": " npx ts-node --project ./config/tsconfig.json scripts/regenerateTestData.ts",
     "test:unit": "jest --config config/jest.config.js",
