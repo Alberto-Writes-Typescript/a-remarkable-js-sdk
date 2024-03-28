@@ -31,6 +31,7 @@ export default class HttpClientHeaders {
    * the new `headers`.
    *
    * @param headers
+   * @returns { @link HttpClientHeaders }
    */
   merge (headers: HttpClientHeaders): this {
     headers.entries.forEach(header => this.add(header))
