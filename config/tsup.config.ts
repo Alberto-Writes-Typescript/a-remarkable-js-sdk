@@ -7,11 +7,11 @@ export const tsup: Options = {
   clean: true,                  // Clean dist folder before bundling
   dts: true,                    // Generate Typescript definition file
   format: ['cjs', 'esm'],       // Generate CJS and ESM bundles
-  minify: env === 'production',
-  bundle: env === 'production',
+  minify: true,
+  bundle: true,
   skipNodeModulesBundle: true,  // Avoid bundling npm dependencies in resulting bundle
   watch: env === 'development', // (only in development) Enable file watch
   target: 'es2020',
-  outDir: env === 'production' ? 'dist' : 'lib',
+  outDir: 'dist',
   entry: ['./src/index.ts']
 }
