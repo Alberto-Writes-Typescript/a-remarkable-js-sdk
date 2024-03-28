@@ -1,7 +1,17 @@
 {
   "name": "a-remarkable-js-sdk",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Simple project to define a JavasScript library (with TypeScript) to interact with the Remarkable API.",
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "test:setup": " npx ts-node --project ./config/tsconfig.json scripts/regenerateTestData.ts",
     "test:unit": "jest --config config/jest.config.js",
