@@ -4,6 +4,9 @@ import { type HeadersPayload } from './HttpClient/Headers'
 import HttpClient from './HttpClient'
 import Request from './HttpClient/Request'
 
+/**
+ * { @link HttpClient } which uses Node.js `https` module to perform HTTP requests.
+ */
 export default class NodeClient extends HttpClient {
   public static async get (
     host: string,

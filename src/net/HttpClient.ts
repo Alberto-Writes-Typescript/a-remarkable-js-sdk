@@ -3,28 +3,15 @@ import type Context from './HttpClient/Context'
 import { type BodyPayload } from './HttpClient/Body'
 
 /**
- * HTTP Client abstract class
+ * Interface for library HTTP client.
  *
- * Defines interface for HTTP clients.
+ * Provides a RESTful interface for performing HTTP requests. All http
+ * requests performed by the library should be done through this interface.
  *
- * Used by the different clients of the current library, to provide
- * implementations of the HTTP interface with different libraries
- * (https, fetch, etc).
- *
- * HTTP requests through client can be performed in two different ways:
- *
- * - If you are performing a specific HTTP requests with a host and headers
- *   which are not used in other requests, you can use the static methods
- *   of the client (get, post, patch, put, delete).
- *
- * - If you are performing multiple requests to the same endpoint with
- *   the same headers, you can create an instance and use the instance
- *   methods (get, post, patch, put, delete). This way, you can perform
- *   multiple requests to the same host/with the same headers without
- *   specifying them every time.
- *
- * @abstract
- * @class HttpClient - HTTP Client abstract class
+ * `HttpClients` interface consists on a set of static methods for performing
+ * HTTP requests. To perform multiple requests with a base `host` and set of
+ * `headers` use the instance methods by instantiating the client with the
+ * base `host` and `headers` as context.
  */
 export default abstract class HttpClient {
   public static async get (
@@ -76,6 +63,12 @@ export default abstract class HttpClient {
     this.context = { host, headers: new Headers(headers) }
   }
 
+  /**
+   * Perform a GET request.
+   *
+   * @param path - Request path destination (https://{@link host}/{@link path})
+   * @param headers - Request headers. Merged with client { @link context.headers } when performing request
+   */
   public async get (
     path: string,
     headers: HeadersPayload = {}
@@ -86,6 +79,13 @@ export default abstract class HttpClient {
       .get(requestContext.host, path, requestContext.headers.entries)
   }
 
+  /**
+   * Perform a POST request.
+   *
+   * @param path - Request path destination (https://{@link host}/{@link path})
+   * @param body - Request body payload
+   * @param headers - Request headers. Merged with client { @link context.headers } when performing request
+   */
   public async post (
     path: string,
     body: BodyPayload = {},
@@ -97,6 +97,13 @@ export default abstract class HttpClient {
       .post(requestContext.host, path, requestContext.headers.entries, body)
   }
 
+  /**
+   * Perform a PATCH request.
+   *
+   * @param path - Request path destination (https://{@link host}/{@link path})
+   * @param body - Request body payload
+   * @param headers - Request headers. Merged with client { @link context.headers } when performing request
+   */
   public async patch (
     path: string,
     body: BodyPayload = {},
@@ -108,6 +115,13 @@ export default abstract class HttpClient {
       .patch(requestContext.host, path, requestContext.headers.entries, body)
   }
 
+  /**
+   * Perform a PUT request.
+   *
+   * @param path - Request path destination (https://{@link host}/{@link path})
+   * @param body - Request body payload
+   * @param headers - Request headers. Merged with client { @link context.headers } when performing request
+   */
   public async put (
     path: string,
     body: BodyPayload = {},
@@ -119,6 +133,12 @@ export default abstract class HttpClient {
       .put(requestContext.host, path, requestContext.headers.entries, body)
   }
 
+  /**
+   * Perform a DELETE request.
+   *
+   * @param path - Request path destination (https://{@link host}/{@link path})
+   * @param headers - Request headers. Merged with client { @link context.headers } when performing request
+   */
   public async delete (
     path: string,
     headers: HeadersPayload = {}
@@ -130,14 +150,24 @@ export default abstract class HttpClient {
   }
 
   /**
-   * Get the class reference, used to invoke the respective static
-   * methods of the HttpClient subclass the instance belongs to.
+   * Get the underlying `HttpClient` instance class reference.
+   *
+   * Used to perform HTTP requests through the client specific http static methods.
+   *
    * @private
    */
   private classReference (): typeof HttpClient {
     return this.constructor as typeof HttpClient
   }
 
+  /**
+   * Request specific configuration. Merges client { @link context.headers }
+   * with request specific headers.
+   *
+   * @param headers - Request specific headers
+   *
+   * @private
+   */
   private requestContext (headers: HeadersPayload): Context {
     return {
       host: this.context.host,

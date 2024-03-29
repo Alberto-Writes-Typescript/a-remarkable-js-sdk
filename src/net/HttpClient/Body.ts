@@ -1,5 +1,12 @@
 /**
- * Error raised when attempted to serialize an unsupported HTTP request body
+ * Error raised when HTTP request `body` type is not supported by { @link HttpClient } { @link Body }.
+ *
+ * { @link Body } only supports body types:
+ *
+ * - `ArrayBuffer`
+ * - `Buffer`
+ * - `String`
+ * - `Record`
  */
 export class InvalidBodyPayloadError extends Error {
   constructor (message: string) {
@@ -9,37 +16,34 @@ export class InvalidBodyPayloadError extends Error {
 }
 
 /**
- * Represents raw data to be send via an HTTP POST / PATCH / PUT request
+ * HTTP request `body` types supported by { @link HttpClient } { @link Body }.
  *
- * There are certain types which developers usually try to send as a request body,
- * which require serialization before sending in request. For example, JavaScript
- * objects need to be stringified to qualify as a valid request body.
- *
- * This type represents all possible body types an `HttpClient` can send. The
- * `HttpClientRequestBody` class requires these payloads for initialization,
- * and ensure to serialize them accordingly depending on their type so they
- * can be dispatched in HTTP requests.
+ * These types can be converted into a `serialized` format, compatible with `http` libraries,
+ * by the { @link HttpClient } { @link Body } to be dispatched as `body` in an
+ * HTTP POST / PATCH / PUT request.
  */
 export type BodyPayload = Record<string, string | boolean | number> | ArrayBuffer | Buffer | string
 
 /**
- * Represents serialized data to be send via an HTTP POST / PATCH / PUT request
+ * Serialized HTTP request `body`.
  *
- * Set of types qualified to be dispatches as `body` in an HTTP POST / PATCH / PUT request.
+ * These types are compatible with `http` libraries and can be dispatched as `body` in an
+ * HTTP POST / PATCH / PUT request.
  */
 export type SerializedBodyPayload = string | ArrayBuffer | Buffer
 
 /**
- * HTTP request body serializer
+ * { @link HttpClient } { @link Request } body
  *
- * Adapter class responsible of handling different data types qualified to
- * be dispatched as `body` in an HTTP POST / PATCH / PUT request. Transforms
- * data types incompatible with HTTP body formats into compatible ones, so
- * they can be used by the `HttpClient` to dispatch requests.
+ * Serializes different data types qualified to be dispatched as `body`
+ * in an HTTP request into an `http` request body compatible format.
  */
 export default class Body {
   /**
-   * Serializes a given payload into a format compatible with HTTP request body
+   * Transforms a `body` payload into a serialized format compatible with `http` libraries.
+   *
+   * @param payload - HTTP request `body` payload, in a format supported by { @link HttpClient } { @link Body }.
+   * @returns Payload in `http` request body compatible format.
    */
   static serialize (payload: BodyPayload): SerializedBodyPayload {
     switch (typeof payload) {
@@ -61,7 +65,16 @@ export default class Body {
     }
   }
 
+  /**
+   * Original HTTP request `body` payload.
+   * @private
+   */
   readonly #content: BodyPayload
+
+  /**
+   * Serialized HTTP request `body` payload, compatible with `http` libraries.
+   * @private
+   */
   readonly #serialized: SerializedBodyPayload
 
   constructor (content: BodyPayload) {
