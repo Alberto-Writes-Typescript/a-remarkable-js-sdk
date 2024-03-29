@@ -1,9 +1,17 @@
 export type HeadersPayload = Record<string, string>
 
 /**
- * HTTP Headers for { @link HttpClient }
+ * { @link HttpClient } { @link Request } headers
+ *
+ * Encapsulates a collection of `http` `header` key - value pairs
+ * and provides logic to export them in different formats
+ * compatible with `http` libraries.
  */
 export default class Headers {
+  /**
+   * Original HTTP request `headers` payload.
+   * @private
+   */
   readonly #entries: Record<string, string>
 
   constructor (headers: HeadersPayload) {
