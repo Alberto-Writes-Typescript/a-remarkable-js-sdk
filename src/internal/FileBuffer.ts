@@ -5,7 +5,6 @@ import { fromByteArray } from 'base64-js'
 import FileBufferType from './FileBufferType'
 import type HttpClient from '../net/HttpClient'
 import type ServiceManager from '../ServiceManager'
-import HttpClientContext from '../net/HttpClientContext'
 
 export class FileNoUploadedError extends Error {
   constructor () {
@@ -80,11 +79,11 @@ export default class FileBuffer {
     const response = await httpClient.post(
       '/doc/v2/files',
       this.buffer,
-      new HttpClientContext(null, {
+      {
         'content-type': this.type.mimeType,
         'rm-meta': this.encodedName,
         'rm-source': 'RoR-Browser'
-      })
+      }
     )
 
     if (response.status !== 201) {

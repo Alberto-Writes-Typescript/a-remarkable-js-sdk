@@ -1,11 +1,11 @@
-import HttpClientRequestBody, { InvalidHttpBodyError } from '../../src/net/HttpClientRequestBody'
+import Body, { InvalidBodyPayloadError } from '../../../src/net/HttpClient/Body'
 
-describe('HttpClientRequestBody', () => {
+describe('Body', () => {
   describe('.serialized', () => {
     it('if payload is an Object, returns String representing stringified Object', () => {
       const payload = { foo: 'bar' }
 
-      const requestBody = new HttpClientRequestBody(payload)
+      const requestBody = new Body(payload)
 
       expect(requestBody.serialized).toBe(JSON.stringify(payload))
     })
@@ -13,7 +13,7 @@ describe('HttpClientRequestBody', () => {
     it('if payload is an ArrayBuffer, returns ArrayBuffer', () => {
       const payload = (new TextEncoder().encode('{ foo: "bar" }')).buffer
 
-      const requestBody = new HttpClientRequestBody(payload)
+      const requestBody = new Body(payload)
 
       expect(requestBody.serialized).toBe(payload)
     })
@@ -21,7 +21,7 @@ describe('HttpClientRequestBody', () => {
     it('if payload is a Buffer, returns Buffer', () => {
       const payload = Buffer.from('{ foo: "bar" }')
 
-      const requestBody = new HttpClientRequestBody(payload)
+      const requestBody = new Body(payload)
 
       expect(requestBody.serialized).toBe(payload)
     })
@@ -29,7 +29,7 @@ describe('HttpClientRequestBody', () => {
     it('if payload is a String, returns String', () => {
       const payload = '{ foo: "bar" }'
 
-      const requestBody = new HttpClientRequestBody(payload)
+      const requestBody = new Body(payload)
 
       expect(requestBody.serialized).toBe(payload)
     })
@@ -38,7 +38,7 @@ describe('HttpClientRequestBody', () => {
       const payload = true
 
       // @ts-expect-error Testing invalid payload
-      expect(() => new HttpClientRequestBody(payload)).toThrow(InvalidHttpBodyError)
+      expect(() => new Body(payload)).toThrow(InvalidBodyPayloadError)
     })
   })
 })

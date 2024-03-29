@@ -1,11 +1,10 @@
 /**
  * Error raised when attempted to serialize an unsupported HTTP request body
  */
-export class InvalidHttpBodyError extends Error {
-  constructor (payload: unknown) {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    super(`Http body payload of kind ${payload.constructor.name} is not supported. Supported types are: Object, ArrayBuffer, Buffer, String.`)
-    this.name = 'InvalidHttpBodyError'
+export class InvalidBodyPayloadError extends Error {
+  constructor (message: string) {
+    super(message)
+    this.name = 'InvalidBodyError'
   }
 }
 
@@ -21,14 +20,14 @@ export class InvalidHttpBodyError extends Error {
  * and ensure to serialize them accordingly depending on their type so they
  * can be dispatched in HTTP requests.
  */
-export type HttpClientRequestBodyPayload = Record<string, string | boolean | number> | ArrayBuffer | Buffer | string
+export type BodyPayload = Record<string, string | boolean | number> | ArrayBuffer | Buffer | string
 
 /**
  * Represents serialized data to be send via an HTTP POST / PATCH / PUT request
  *
  * Set of types qualified to be dispatches as `body` in an HTTP POST / PATCH / PUT request.
  */
-export type HttpClientRequestSerializedBody = string | ArrayBuffer | Buffer
+export type SerializedBodyPayload = string | ArrayBuffer | Buffer
 
 /**
  * HTTP request body serializer
@@ -38,11 +37,11 @@ export type HttpClientRequestSerializedBody = string | ArrayBuffer | Buffer
  * data types incompatible with HTTP body formats into compatible ones, so
  * they can be used by the `HttpClient` to dispatch requests.
  */
-export default class HttpClientRequestBody {
+export default class Body {
   /**
    * Serializes a given payload into a format compatible with HTTP request body
    */
-  static serialize (payload: HttpClientRequestBodyPayload): HttpClientRequestSerializedBody {
+  static serialize (payload: BodyPayload): SerializedBodyPayload {
     switch (typeof payload) {
       case 'object':
         if (payload instanceof ArrayBuffer || payload instanceof Buffer) {
@@ -53,15 +52,28 @@ export default class HttpClientRequestBody {
       case 'string':
         return payload
       default:
-        throw new InvalidHttpBodyError(payload)
+        throw new InvalidBodyPayloadError(
+          `
+           ${(payload as unknown).constructor.name} Http body payload not supported.
+           Supported types are: ArrayBuffer, Buffer, String & Record.
+          `
+        )
     }
   }
 
-  readonly body: HttpClientRequestBodyPayload
-  readonly serialized: HttpClientRequestSerializedBody
+  readonly #content: BodyPayload
+  readonly #serialized: SerializedBodyPayload
 
-  constructor (body: HttpClientRequestBodyPayload) {
-    this.body = body
-    this.serialized = HttpClientRequestBody.serialize(body)
+  constructor (content: BodyPayload) {
+    this.#content = content
+    this.#serialized = Body.serialize(content)
+  }
+
+  get content (): BodyPayload {
+    return this.#content
+  }
+
+  get serialized (): SerializedBodyPayload {
+    return this.#serialized
   }
 }
