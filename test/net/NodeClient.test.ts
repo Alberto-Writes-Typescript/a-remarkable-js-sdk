@@ -6,7 +6,7 @@ describe('NodeClient', () => {
   // Enables Polly.js to record and replay HTTP requests for each test
   setupHttpRecording()
 
-  describe('.get', () => {
+  describe('#get', () => {
     it('performs GET request', async () => {
       const response = await NodeClient.get('https://jsonplaceholder.typicode.com', '/todos/1')
 
@@ -29,7 +29,7 @@ describe('NodeClient', () => {
     })
   })
 
-  describe('.post', () => {
+  describe('#post', () => {
     it('performs POST request', async () => {
       const body: Record<string, string | number> = { title: 'foo', body: 'bar', userId: 1 }
 
@@ -55,7 +55,7 @@ describe('NodeClient', () => {
     })
   })
 
-  describe('.patch', () => {
+  describe('#patch', () => {
     it('performs PATCH request', async () => {
       const body = { title: 'foo' }
 
@@ -81,7 +81,7 @@ describe('NodeClient', () => {
     })
   })
 
-  describe('.put', () => {
+  describe('#put', () => {
     it('performs PUT request', async () => {
       const body = { id: 1, title: 'foo', body: 'bar', userId: 1 }
 
@@ -95,7 +95,6 @@ describe('NodeClient', () => {
       const path: string = '/posts/1'
       const method: string = 'PUT'
       const headers = { Authorization: 'Bearer token' }
-      // const body = { id: 1, title: 'foo', body: 'bar', userId: 1 }
 
       const mock: jest.Mock = mockHttpsRequest(host, path, method, headers)
 
@@ -107,7 +106,7 @@ describe('NodeClient', () => {
     })
   })
 
-  describe('.delete', () => {
+  describe('#delete', () => {
     it('performs DELETE request', async () => {
       const response = await NodeClient.delete('https://jsonplaceholder.typicode.com', '/todos/1')
 

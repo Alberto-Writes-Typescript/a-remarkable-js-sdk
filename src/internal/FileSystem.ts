@@ -1,7 +1,6 @@
 import Document from './Document'
 import Folder from './Folder'
 import type HttpClient from '../net/HttpClient'
-import HttpClientContext from '../net/HttpClientContext'
 import type ServiceManager from '../ServiceManager'
 
 export interface DocumentPayload {
@@ -106,7 +105,7 @@ export default class FileSystem {
 
     const response = await httpClient.get(
       '/doc/v2/files',
-      new HttpClientContext(null, { 'rm-source': 'RoR-Browser' })
+      { 'rm-source': 'RoR-Browser' }
     )
 
     if (response.status !== 200) {

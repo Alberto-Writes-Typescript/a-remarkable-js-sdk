@@ -1,5 +1,6 @@
-import HttpClientContext from './HttpClientContext'
-import { type HttpClientRequestBodyPayload } from './HttpClientRequestBody'
+import Headers, { type HeadersPayload } from './HttpClient/Headers'
+import type Context from './HttpClient/Context'
+import { type BodyPayload } from './HttpClient/Body'
 
 /**
  * HTTP Client abstract class
@@ -29,7 +30,7 @@ export default abstract class HttpClient {
   public static async get (
     host: string,
     path: string,
-    headers: Record<string, string> = {}
+    headers: HeadersPayload = {}
   ): Promise<Response> {
     throw new Error('HTTP Client does not implement get static method')
   }
@@ -37,8 +38,8 @@ export default abstract class HttpClient {
   public static async post (
     host: string,
     path: string,
-    headers: Record<string, string> = {},
-    body: HttpClientRequestBodyPayload = {}
+    headers: HeadersPayload = {},
+    body: BodyPayload = {}
   ): Promise<Response> {
     throw new Error('HTTP Client does not implement post static method')
   }
@@ -46,8 +47,8 @@ export default abstract class HttpClient {
   public static async patch (
     host: string,
     path: string,
-    headers: Record<string, string> = {},
-    body: HttpClientRequestBodyPayload = {}
+    headers: HeadersPayload = {},
+    body: BodyPayload = {}
   ): Promise<Response> {
     throw new Error('HTTP Client does not implement patch static method')
   }
@@ -55,8 +56,8 @@ export default abstract class HttpClient {
   public static async put (
     host: string,
     path: string,
-    headers: Record<string, string> = {},
-    body: HttpClientRequestBodyPayload = {}
+    headers: HeadersPayload = {},
+    body: BodyPayload = {}
   ): Promise<Response> {
     throw new Error('HTTP Client does not implement put static method')
   }
@@ -64,68 +65,68 @@ export default abstract class HttpClient {
   public static async delete (
     host: string,
     path: string,
-    headers: Record<string, string> = {}
+    headers: HeadersPayload = {}
   ): Promise<Response> {
     throw new Error('HTTP Client does not implement delete static method')
   }
 
-  readonly context: HttpClientContext
+  readonly context: Context
 
-  constructor (host: string, headers: Record<string, string> = {}) {
-    this.context = new HttpClientContext(host, headers)
+  constructor (host: string, headers: HeadersPayload = {}) {
+    this.context = { host, headers: new Headers(headers) }
   }
 
   public async get (
     path: string,
-    context: HttpClientContext = this.context
+    headers: HeadersPayload = {}
   ): Promise<Response> {
-    const requestContext: HttpClientContext = this.context.merge(context)
+    const requestContext = this.requestContext(headers)
 
     return await this.classReference()
-      .get(requestContext.host, path, requestContext.headers)
+      .get(requestContext.host, path, requestContext.headers.entries)
   }
 
   public async post (
     path: string,
-    body: HttpClientRequestBodyPayload = {},
-    context: HttpClientContext = this.context
+    body: BodyPayload = {},
+    headers: HeadersPayload = {}
   ): Promise<Response> {
-    const requestContext: HttpClientContext = this.context.merge(context)
+    const requestContext = this.requestContext(headers)
 
     return await this.classReference()
-      .post(requestContext.host, path, requestContext.headers, body)
+      .post(requestContext.host, path, requestContext.headers.entries, body)
   }
 
   public async patch (
     path: string,
-    body: HttpClientRequestBodyPayload = {},
-    context: HttpClientContext = this.context
+    body: BodyPayload = {},
+    headers: HeadersPayload = {}
   ): Promise<Response> {
-    const requestContext: HttpClientContext = this.context.merge(context)
+    const requestContext = this.requestContext(headers)
 
     return await this.classReference()
-      .patch(requestContext.host, path, requestContext.headers, body)
+      .patch(requestContext.host, path, requestContext.headers.entries, body)
   }
 
   public async put (
     path: string,
-    body: HttpClientRequestBodyPayload = {},
-    context: HttpClientContext = this.context
+    body: BodyPayload = {},
+    headers: HeadersPayload = {}
   ): Promise<Response> {
-    const requestContext: HttpClientContext = this.context.merge(context)
+    const requestContext = this.requestContext(headers)
 
     return await this.classReference()
-      .put(requestContext.host, path, requestContext.headers, body)
+      .put(requestContext.host, path, requestContext.headers.entries, body)
   }
 
   public async delete (
     path: string,
-    context: HttpClientContext = this.context
+    headers: HeadersPayload = {}
   ): Promise<Response> {
-    const requestContext: HttpClientContext = this.context.merge(context)
+    const requestContext = this.requestContext(headers)
 
     return await this.classReference()
-      .delete(requestContext.host, path, requestContext.headers)
+      .delete(requestContext.host, path, requestContext.headers.entries)
   }
 
   /**
@@ -135,5 +136,12 @@ export default abstract class HttpClient {
    */
   private classReference (): typeof HttpClient {
     return this.constructor as typeof HttpClient
+  }
+
+  private requestContext (headers: HeadersPayload): Context {
+    return {
+      host: this.context.host,
+      headers: new Headers({ ...this.context.headers.entries, ...(new Headers(headers)).entries })
+    }
   }
 }

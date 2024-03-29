@@ -35,7 +35,10 @@ export default class ServiceManager {
 
   constructor (device: Device) {
     this.device = device
-    this.httpClient = new NodeClient(SERVICE_DISCOVERY_HOST, { Authorization: `Bearer ${this.device.sessionToken.token}` })
+    this.httpClient = new NodeClient(
+      SERVICE_DISCOVERY_HOST,
+      { Authorization: `Bearer ${this.device.sessionToken.token}` }
+    )
   }
 
   /**
@@ -60,7 +63,8 @@ export default class ServiceManager {
       resolve(
         new NodeClient(
           'https://internal.cloud.remarkable.com',
-          { Authorization: `Bearer ${this.device.sessionToken.token}` })
+          { Authorization: `Bearer ${this.device.sessionToken.token}` }
+        )
       )
 
       reject(new Error('Not implemented'))
