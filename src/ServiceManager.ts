@@ -98,7 +98,7 @@ export default class ServiceManager {
    */
   public async productionHttpClient (): Promise<HttpClient> {
     return await new Promise((resolve, reject = () => {}) => {
-      resolve(ServiceManager.productionHttpClient({ Authorization: `Bearer ${this.device.pairToken.token}` }))
+      resolve(ServiceManager.productionHttpClient({ Authorization: `Bearer ${this.device.token}` }))
 
       reject(new Error('Not implemented'))
     })

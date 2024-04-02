@@ -1,5 +1,4 @@
 import Device from '../../src/authentication/Device'
-import DeviceToken from '../../src/authentication/DeviceToken'
 import FileSystem, { type DocumentPayload, FileSystemParser, type FolderPayload } from '../../src/internal/FileSystem'
 import ServiceManager from '../../src/ServiceManager'
 
@@ -135,11 +134,7 @@ describe('FileSystem', () => {
   // TODO: Figure out a way to record the HTTP from a different account
 
   beforeEach(async () => {
-    const device = new Device(
-      process.env.SAMPLE_UUID,
-      'browser-chrome',
-      new DeviceToken(process.env.SAMPLE_PAIR_TOKEN)
-    )
+    const device = new Device(process.env.SAMPLE_PAIR_TOKEN)
 
     await device.connect()
 

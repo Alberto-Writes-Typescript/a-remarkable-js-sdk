@@ -1,6 +1,5 @@
 import HttpClient from '../src/net/HttpClient'
 import Device from '../src/authentication/Device'
-import DeviceToken from '../src/authentication/DeviceToken'
 import ServiceManager from '../src/ServiceManager'
 import { setupHttpRecording } from './helpers/pollyHelpers'
 
@@ -10,7 +9,7 @@ describe('ServiceManager', () => {
 
   describe('.documentStorageHttpClient', () => {
     it('if Device is connected, returns HttpClient instance with document storage configuration', async () => {
-      const device = new Device(process.env.SAMPLE_UUID, 'browser-chrome', new DeviceToken(process.env.SAMPLE_PAIR_TOKEN))
+      const device = new Device(process.env.SAMPLE_PAIR_TOKEN)
 
       await device.connect()
 
@@ -29,7 +28,7 @@ describe('ServiceManager', () => {
 
   describe('.internalCloudHttpClient', () => {
     it('if Device is connected, returns HttpClient instance with internal cloud configuration', async () => {
-      const device = new Device(process.env.SAMPLE_UUID, 'browser-chrome', new DeviceToken(process.env.SAMPLE_PAIR_TOKEN))
+      const device = new Device(process.env.SAMPLE_PAIR_TOKEN)
 
       await device.connect()
 
