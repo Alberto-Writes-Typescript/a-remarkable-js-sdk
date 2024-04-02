@@ -1,6 +1,8 @@
 import { InvalidTokenError } from 'jwt-decode'
-import Device, { InvalidRemarkableTokenError } from '../../src/authentication/Device'
+import Device from '../../src/authentication/Device'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
+import RemarkableTokenPayload, { InvalidRemarkableTokenError } from '../../src/authentication/RemarkableTokenPayload'
+import Session from '../../src/authentication/Session'
 
 describe('Device', () => {
   // Enables Polly.js to record and replay HTTP requests for each test
@@ -52,9 +54,11 @@ describe('Device', () => {
 
         await device.connect()
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        expect(device.sessionToken.deviceId).toBe(process.env.SAMPLE_UUID)
-        expect(device.sessionToken.deviceDescription).toBe('browser-chrome')
+        expect(device.session).toBeInstanceOf(Session)
+
+        const sessionTokenPayload = new RemarkableTokenPayload(device.session.token)
+        expect(sessionTokenPayload.deviceId).toBe(process.env.SAMPLE_UUID)
+        expect(sessionTokenPayload.deviceDescription).toBe('browser-chrome')
       },
       30000
     )
