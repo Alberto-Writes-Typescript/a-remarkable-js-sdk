@@ -22,7 +22,7 @@ describe('ServiceManager', () => {
       expect(client.context.host)
         .toBe('https://document-storage-production-dot-remarkable-production.appspot.com')
       expect(JSON.stringify(client.context.headers.entries))
-        .toBe(JSON.stringify({ Authorization: `Bearer ${device.sessionToken.token}` }))
+        .toBe(JSON.stringify({ Authorization: `Bearer ${device.session.token}` }))
     }, 5000)
   })
 
@@ -41,7 +41,7 @@ describe('ServiceManager', () => {
       expect(client.context.host)
         .toBe('https://internal.cloud.remarkable.com')
       expect(JSON.stringify(client.context.headers.entries))
-        .toBe(JSON.stringify({ Authorization: `Bearer ${device.sessionToken.token}` }))
+        .toBe(JSON.stringify({ Authorization: `Bearer ${device.session.token}` }))
     }, 5000)
   })
 })

@@ -1,57 +1,8 @@
-import { jwtDecode } from 'jwt-decode'
-import DeviceToken from './DeviceToken'
 import type HttpClient from '../net/HttpClient'
 import { type DeviceDescription } from './DeviceDescription'
 import ServiceManager from '../ServiceManager'
-
-const REMARKABLE_JWT_MAPPING = {
-  deviceId: 'device-id',
-  deviceDescription: 'device-desc'
-}
-
-export class InvalidRemarkableTokenError extends Error {}
-
-/**
- * reMarkable Cloud API JWT token payload for pairing & authentication requests
- */
-class RemarkableTokenPayload {
-  /**
-   * Validates a reMarkable Cloud API JWT token.
-   *
-   * a reMarkable Cloud API JWT represents a `device` via its ID
-   * and description. Every reMarkable Cloud API JWT token must
-   * contain these two fields.
-   *
-   * @param token
-   */
-  static valid (token: string): boolean {
-    const parsedToken = jwtDecode(token)
-
-    return Object.values(REMARKABLE_JWT_MAPPING).every((jwtKey) => {
-      return Object.keys(parsedToken).includes(jwtKey)
-    })
-  }
-
-  public readonly token: string
-  public readonly deviceId: string
-  public readonly deviceDescription: DeviceDescription
-
-  constructor (token: string) {
-    const parsedToken = jwtDecode(token)
-
-    if (!RemarkableTokenPayload.valid(token)) {
-      throw new InvalidRemarkableTokenError(`
-        Invalid reMarkable Cloud API token. A valid reMarkable
-        Cloud API token contains a device ID and description.
-        The current token does contains ${Object.keys(parsedToken).join(', ')} fields.
-      `)
-    }
-
-    this.token = token
-    this.deviceId = parsedToken['device-id']
-    this.deviceDescription = parsedToken['device-desc']
-  }
-}
+import RemarkableTokenPayload from './RemarkableTokenPayload'
+import Session from './Session'
 
 /**
  * Represents a reMarkable device. Provides an interface to
@@ -113,7 +64,7 @@ export default class Device {
    * reMarkable Cloud API token required on every request to the API
    * (expect authentication requests) for user authentication.
    */
-  public sessionToken: DeviceToken | null = null
+  public session?: Session = null
 
   private readonly httpClient: HttpClient
 
@@ -127,6 +78,13 @@ export default class Device {
     this.httpClient = ServiceManager.productionHttpClient({ Authorization: `Bearer ${this.token}` })
   }
 
+  /**
+   * Creates a new `device` `session`.
+   *
+   * Fetches a new session token from the reMarkable Cloud API. This token
+   * can be used to perform authenticated requests to the reMarkable Cloud API
+   * in behalf of the user account associated to the `device`.
+   */
   public async connect (): Promise<Device> {
     const connectResponse = await this.httpClient.post('/token/json/2/user/new', {})
 
@@ -134,7 +92,7 @@ export default class Device {
       throw new Error(`Failed to connect with Remarkable API: ${connectResponse.statusText}`)
     }
 
-    this.sessionToken = new DeviceToken(await connectResponse.text())
+    this.session = new Session(await connectResponse.text())
 
     return this
   }

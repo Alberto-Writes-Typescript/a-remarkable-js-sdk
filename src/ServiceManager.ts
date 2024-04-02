@@ -58,7 +58,7 @@ export default class ServiceManager {
     this.device = device
     this.httpClient = new NodeClient(
       SERVICE_DISCOVERY_HOST,
-      { Authorization: `Bearer ${this.device.sessionToken.token}` }
+      { Authorization: `Bearer ${this.device.session.token}` }
     )
   }
 
@@ -84,7 +84,7 @@ export default class ServiceManager {
       resolve(
         new NodeClient(
           'https://internal.cloud.remarkable.com',
-          { Authorization: `Bearer ${this.device.sessionToken.token}` }
+          { Authorization: `Bearer ${this.device.session.token}` }
         )
       )
 
@@ -118,7 +118,7 @@ export default class ServiceManager {
 
     return new NodeClient(
       `https://${discoveryPayload.Host}`,
-      { Authorization: `Bearer ${this.device.sessionToken.token}` }
+      { Authorization: `Bearer ${this.device.session.token}` }
     )
   }
 }
