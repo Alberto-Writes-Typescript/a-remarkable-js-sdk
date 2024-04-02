@@ -1,5 +1,4 @@
 import Device from '../src/authentication/Device'
-import DeviceToken from '../src/authentication/DeviceToken'
 import * as fs from 'fs'
 import fsExtra from 'fs-extra'
 import { v4 as uuidv4 } from 'uuid'
@@ -59,7 +58,7 @@ class DeviceConnector {
 
   constructor (token?: string, uuid?: string) {
     if (uuid != null && token != null) {
-      this.device = new Device(uuid, 'browser-chrome', new DeviceToken(token))
+      this.device = new Device(token)
     }
   }
 
@@ -159,7 +158,7 @@ void (async () => {
   ✅ - Token generated:
      - Device ID: ${deviceConnector.device.id}
      - Device Description: ${deviceConnector.device.description}
-     - Pair Token: ${deviceConnector.device.pairToken.token}
+     - Pair Token: ${deviceConnector.device.token}
   `)
 
   log('2. Rewriting test environment variables...')
@@ -167,7 +166,7 @@ void (async () => {
   const environmentConfigurationManager = new EnvironmentConfigurationManager()
   environmentConfigurationManager.setConfigurationParameter('SAMPLE_ONE_TIME_CODE', deviceConnector.oneTimeCode)
   environmentConfigurationManager.setConfigurationParameter('SAMPLE_UUID', deviceConnector.device.id)
-  environmentConfigurationManager.setConfigurationParameter('SAMPLE_PAIR_TOKEN', deviceConnector.device.pairToken.token)
+  environmentConfigurationManager.setConfigurationParameter('SAMPLE_PAIR_TOKEN', deviceConnector.device.token)
 
   log('✅ - Environment Credentials successfully updated in .env.test')
 

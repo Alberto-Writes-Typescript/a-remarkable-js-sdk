@@ -1,5 +1,4 @@
 import Device from '../../src/authentication/Device'
-import DeviceToken from '../../src/authentication/DeviceToken'
 import FileBuffer from '../../src/./internal/FileBuffer'
 import ServiceManager from '../../src/ServiceManager'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
@@ -10,11 +9,7 @@ describe('FileBuffer', () => {
   setupHttpRecording()
 
   beforeEach(async () => {
-    const device = new Device(
-      process.env.SAMPLE_UUID,
-      'browser-chrome',
-      new DeviceToken(process.env.SAMPLE_PAIR_TOKEN)
-    )
+    const device = new Device(process.env.SAMPLE_PAIR_TOKEN)
 
     await device.connect()
 
