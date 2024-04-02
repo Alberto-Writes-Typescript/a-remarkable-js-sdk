@@ -1,7 +1,7 @@
 import type Device from './authentication/Device'
 import NodeClient from './net/NodeClient'
 import type HttpClient from './net/HttpClient'
-import type HeadersPayload from './net/HttpClient/HeadersPayload'
+import { type HeadersPayload } from './net/HttpClient/Headers'
 
 const SERVICE_DISCOVERY_HOST: string = 'https://service-manager-production-dot-remarkable-production.appspot.com'
 
@@ -19,24 +19,36 @@ interface ServiceManagerResponse {
 
 /**
  * Generates `HttpClient` instances preconfigured for performing
- * requests to the different services available in the reMarkable API.
+ * requests to the different services available in the reMarkable
+ * Cloud API.
  *
- * Each service in the reMarkable API (such as authentication, document storage, ...)
- * has a specific host. The `/service` API endpoint allows developers to fetch the
- * these hosts. This class provides a public interface of methods representing all
- * the services available in the API.
+ * Each service in the reMarkable Cloud API (such as authentication,
+ * document storage, ...) has a specific host. The `/service` API
+ * endpoint allows developers to fetch the these hosts. This class
+ * provides a public interface of methods representing all the
+ * services available in the API.
  *
- * Use these methods to get instances of the `HttpClient` configured with
- * the corresponding host and authentication headers for the service you
- * want to make use of.
+ * Use these methods to get instances of the `HttpClient` configured
+ * with the corresponding host and authentication headers for the
+ * service you want to make use of.
  */
 export default class ServiceManager {
-  static productionHttpClient (headers: HeadersPayload): Promise<HttpClient> {
-    return await new Promise((resolve, reject = () => {}) => {
-      resolve(new NodeClient('https://webapp-prod.cloud.remarkable.engineering', headers))
-
-      reject(new Error('Not implemented'))
-    })
+  /**
+   * Returns `HttpClient` configured with host and header options to
+   * perform requests to the reMarkable production API.
+   *
+   * This API endpoint is not a service per-se, but provides some similar
+   * utilities other services provide (such as device pairing or session
+   * creation). To keep the logic to fetch endpoints consistent, this
+   * method encapsulates the endpoint logic as if it was another service.
+   *
+   * Some of the utilities the endpoint provide does not require from
+   * any headers. By defining this method as static, we can make use
+   * of this endpoint without requiring a `Device` instance (as it
+   * is required for other endpoints).
+   */
+  static productionHttpClient (headers: HeadersPayload = {}): HttpClient {
+    return new NodeClient('https://webapp-prod.cloud.remarkable.engineering', headers)
   }
 
   public readonly device: Device
@@ -83,20 +95,10 @@ export default class ServiceManager {
   /**
    * Returns `HttpClient` configured with host and header options to
    * perform requests to the reMarkable production API.
-   *
-   * This API endpoint is not a service per-se, but provides some similar
-   * utilities other services provide (such as device pairing or session
-   * creation). To keep the logic to fetch endpoints consistent, this
-   * method encapsulates the endpoint logic as if it was another service.
    */
-  public async productionHttpClient (withAuthenticationHeaders = true): Promise<HttpClient> {
+  public async productionHttpClient (): Promise<HttpClient> {
     return await new Promise((resolve, reject = () => {}) => {
-      resolve(
-        new NodeClient(
-          'https://webapp-prod.cloud.remarkable.engineering',
-          { Authorization: `Bearer ${this.device.pairToken.token}` }
-        )
-      )
+      resolve(ServiceManager.productionHttpClient({ Authorization: `Bearer ${this.device.pairToken.token}` }))
 
       reject(new Error('Not implemented'))
     })

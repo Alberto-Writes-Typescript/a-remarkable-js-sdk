@@ -8,7 +8,7 @@ describe('ServiceManager', () => {
   // Enables Polly.js to record and replay HTTP requests for each test
   setupHttpRecording()
 
-  describe('#documentStorageHttpClient', () => {
+  describe('.documentStorageHttpClient', () => {
     it('if Device is connected, returns HttpClient instance with document storage configuration', async () => {
       const device = new Device(process.env.SAMPLE_UUID, 'browser-chrome', new DeviceToken(process.env.SAMPLE_PAIR_TOKEN))
 
@@ -27,7 +27,7 @@ describe('ServiceManager', () => {
     }, 5000)
   })
 
-  describe('#internalCloudHttpClient', () => {
+  describe('.internalCloudHttpClient', () => {
     it('if Device is connected, returns HttpClient instance with internal cloud configuration', async () => {
       const device = new Device(process.env.SAMPLE_UUID, 'browser-chrome', new DeviceToken(process.env.SAMPLE_PAIR_TOKEN))
 
