@@ -6,6 +6,7 @@ import minimist from 'minimist'
 import open from 'open'
 import { v4 as uuidv4 } from 'uuid'
 import { HashUrl, ServiceManager, Device, FileSystem } from '../src'
+import path from "path";
 
 /**
  * Defines the list of arguments processed by the script. Each argument is represented
@@ -80,6 +81,44 @@ class EnvironmentManager {
 }
 
 /**
+ * Removes sensible data from generated HTTP records
+ */
+function anonymizeHttpRecords (): void {
+  function getHarFilePaths (folder: string = HTTP_RECORDS_PATH): string[] {
+    let harFiles = []
+
+    const folderEntries = fs.readdirSync(folder, { withFileTypes: true })
+
+    for (const entry of folderEntries) {
+      const entryPath = path.join(folder, entry.name)
+
+      if (entry.isDirectory()) {
+        harFiles = harFiles.concat(getHarFilePaths(entryPath))
+      } else {
+        if (path.extname(entry.name) === '.har') harFiles.push(entryPath)
+      }
+    }
+
+    return harFiles
+  }
+
+  const sensibleFieldRegexs = [
+    /(\\"visibleName\\":\\")(.*?)\\"/g,
+    /(\\"docId\\":\\")(.*?)\\"/g
+  ]
+
+  function anonymizeHarFile (harFilePath: string): void {
+    let anonymizedData = fs.readFileSync(harFilePath, 'utf8')
+
+    sensibleFieldRegexs.forEach((regex) => { anonymizedData = anonymizedData.replace(regex, '$1-\\"') })
+
+    fs.writeFileSync(harFilePath, anonymizedData, 'utf8')
+  }
+
+  (getHarFilePaths()).forEach((harFilePath) => { anonymizeHarFile(harFilePath) })
+}
+
+/**
  * SCRIPT BODY
  */
 void (async () => {
@@ -145,6 +184,8 @@ void (async () => {
   execSync('yarn test:unit:without-file-buffer')
   // Run buffer tests to generate missing HTTP records related to file upload
   execSync('yarn test:unit:file-buffer')
+  // Anonymize HTTP records
+  anonymizeHttpRecords()
 
   consola.success('HTTP records regenerated!')
 
