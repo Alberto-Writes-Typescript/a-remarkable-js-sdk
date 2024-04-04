@@ -47,7 +47,7 @@ const UNIT_TEST_DATA_KEY = 'UNIT_TEST_DATA'
  * Handles test environment variables
  */
 class EnvironmentManager {
-  public unitTestData: {
+  public parameters: {
     deviceId: string
     deviceToken: string
     sessionToken: string
@@ -66,16 +66,17 @@ class EnvironmentManager {
 
     if (rawUnitTestData == null) throw new Error('Unit test data not found in environment configuration file')
 
-    this.unitTestData = JSON.parse(rawUnitTestData[1])
+    this.parameters = JSON.parse(Buffer.from(rawUnitTestData[1], 'base64').toString('utf8'))
   }
 
   setParameter (key: string, value: string | number): void {
-    this.unitTestData[key] = value
+    this.parameters[key] = value
   }
 
   saveEnvironmentConfiguration (): void {
     let fileContents = fs.readFileSync('.env.test', 'utf8')
-    fileContents = fileContents.replace(/(UNIT_TEST_DATA\s*=\s*).*/, `$1${JSON.stringify(this.unitTestData)}`)
+    const encodedParameters = Buffer.from(JSON.stringify(this.parameters)).toString('base64')
+    fileContents = fileContents.replace(/(UNIT_TEST_DATA\s*=\s*).*/, `$1${encodedParameters}`)
     fs.writeFileSync('.env.test', fileContents)
   }
 }
@@ -177,11 +178,11 @@ void (async () => {
     message: `
       The following parameters will be saved in your environment configuration:
 
-      - Device ID: ${environmentManager.unitTestData.deviceId}
-      - Device Token: ${environmentManager.unitTestData.deviceToken}
-      - Session Token: ${environmentManager.unitTestData.sessionToken}
-      - Root Folder Hash: ${environmentManager.unitTestData.rootFolderHash}
-      - File System Documents Count: ${environmentManager.unitTestData.fileSystemDocumentsCount}
+      - Device ID: ${environmentManager.parameters.deviceId}
+      - Device Token: ${environmentManager.parameters.deviceToken}
+      - Session Token: ${environmentManager.parameters.sessionToken}
+      - Root Folder Hash: ${environmentManager.parameters.rootFolderHash}
+      - File System Documents Count: ${environmentManager.parameters.fileSystemDocumentsCount}
 
       Do you want to replace the existing environment configuration with this one, and
       re-generate test data with these parameters?
