@@ -1,17 +1,19 @@
-import Device from '../../src/authentication/Device'
 import FileBuffer from '../../src/./internal/FileBuffer'
 import ServiceManager from '../../src/serviceDiscovery/ServiceManager'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
+import { Session } from '../../src'
 
 describe('FileBuffer', () => {
+  let testParameters = null
   let serviceManager: ServiceManager = null
 
   setupHttpRecording()
 
-  beforeEach(async () => {
-    const device = new Device(process.env.SAMPLE_PAIR_TOKEN)
+  beforeEach(() => {
+    testParameters = JSON.parse(process.env.UNIT_TEST_DATA)
 
-    const session = await device.connect()
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const session = new Session(testParameters.sessionToken)
 
     serviceManager = new ServiceManager(session)
   })

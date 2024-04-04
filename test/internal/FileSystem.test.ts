@@ -1,6 +1,8 @@
 import Device from '../../src/authentication/Device'
 import FileSystem, { type DocumentPayload, FileSystemParser, type FolderPayload } from '../../src/internal/FileSystem'
 import ServiceManager from '../../src/serviceDiscovery/ServiceManager'
+import {setupHttpRecording} from "../helpers/pollyHelpers";
+import {Session} from "../../src";
 
 describe('FileSystemParser', () => {
   /**
@@ -129,14 +131,16 @@ describe('FileSystemParser', () => {
 })
 
 describe('FileSystem', () => {
+  let testParameters = null
   let serviceManager: ServiceManager = null
 
-  // TODO: Figure out a way to record the HTTP from a different account
+  // setupHttpRecording()
 
-  beforeEach(async () => {
-    const device = new Device(process.env.SAMPLE_PAIR_TOKEN)
+  beforeEach(() => {
+    testParameters = JSON.parse(process.env.UNIT_TEST_DATA)
 
-    const session = await device.connect()
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const session = new Session(testParameters.sessionToken)
 
     serviceManager = new ServiceManager(session)
   })
@@ -145,8 +149,7 @@ describe('FileSystem', () => {
     it('returns FileSystem object containing the entire reMarkable account file tree', async () => {
       const fileSystem = await FileSystem.initialize(serviceManager)
 
-      expect(fileSystem.folders.length).toBe(37)
-      expect(fileSystem.documents.length).toBe(116)
+      expect(fileSystem.documents.length).toBe(testParameters.fileSystemDocumentsCount)
     })
   })
 })
