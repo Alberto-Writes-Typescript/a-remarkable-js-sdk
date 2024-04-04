@@ -2,7 +2,13 @@
   "name": "a-remarkable-js-sdk",
   "version": "0.1.0",
   "description": "a reMarkable Cloud API wrapper written in TypeScript",
-  "keywords": ["reMarkable", "reMarkable Cloud", "pdf", "ePub", "api"],
+  "keywords": [
+    "reMarkable",
+    "reMarkable Cloud",
+    "pdf",
+    "ePub",
+    "api"
+  ],
   "author": "Alberto Hernandez Cerezo <pascu216@gmail.com>",
   "license": "MIT",
   "repository": {
@@ -20,9 +26,11 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test:setup": " npx ts-node --project ./config/tsconfig.json scripts/regenerateTestData.ts",
+    "test:setup": "npx tsx --tsconfig ./config/tsconfig.json ./scripts/regenerateTestData.ts",
     "test:unit": "jest --config config/jest.config.js",
     "test:unit:without-file-buffer": "jest --config config/jest.config.js --testPathIgnorePatterns test/internal/FileBuffer.test.ts",
     "test:unit:file-buffer": "jest --config config/jest.config.js test/internal/FileBuffer.test.ts",
@@ -59,7 +67,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "minimist": "^1.2.8",
     "npm-dts": "^1.3.12",
-    "open-web-browser": "^0.1.1",
+    "open": "^10.1.0",
     "path": "^0.12.7",
     "readline-sync": "^1.4.10",
     "ts-jest": "^29.1.2",
