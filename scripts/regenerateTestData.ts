@@ -1,10 +1,11 @@
 import Device from '../src/authentication/Device'
 import * as fs from 'fs'
 import fsExtra from 'fs-extra'
+import open from 'open'
 import { v4 as uuidv4 } from 'uuid'
+import readlineSync from 'readline-sync'
+import minimist from 'minimist'
 
-const openBrowser = require('open-web-browser')
-const readlineSync = require('readline-sync')
 const log = console.log
 
 const ENVIRONMENT_CONFIGURATION_FILE = '.env.test'
@@ -31,7 +32,7 @@ class ScriptArguments {
   constructor () {
     // extract script parameters
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const argv = require('minimist')(process.argv.slice(2))
+    const argv = minimist(process.argv.slice(2))
 
     this.oneTimeCode = argv.oneTimeCode
     this.token = argv.token
@@ -148,7 +149,7 @@ void (async () => {
 
     while (deviceConnector.pairRequired()) {
       log('   -> Request new one-time code to reMarkable Cloud (fetch in the TABLET -> + Pair device option). Webpage for code retrieval will be opened automatically ...')
-      openBrowser('https://my.remarkable.com/device/remarkable')
+      await open('https://my.remarkable.com/device/remarkable')
       oneTimeCode = readlineSync.question('   -> Enter given one-time code: ')
       await deviceConnector.pair(oneTimeCode)
     }
@@ -183,6 +184,6 @@ void (async () => {
        Now remove the generated token from your reMarkable account, so it cannot be used by unauthorized users.
        References to the token might be present in the HTTP records, thus token removal is required.
   `)
-  openBrowser('https://my.remarkable.com/device/browser')
+  await open('https://my.remarkable.com/device/browser')
   readlineSync.question('      Once token is removed from the terminal, come back to this terminal and press any key to continue...')
 })()
