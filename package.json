@@ -30,7 +30,9 @@
     "dist"
   ],
   "scripts": {
-    "test:setup": "npx tsx --tsconfig ./config/tsconfig.json ./scripts/newRegenerateTestData.ts",
+    "test:setup": "yarn test:setup:regenerate-data && yarn test:setup:anonymize-data",
+    "test:setup:regenerate-data": "npx tsx --tsconfig ./config/tsconfig.json ./scripts/regenerateTestData.ts",
+    "test:setup:anonymize-data": "npx tsx --tsconfig ./config/tsconfig.json ./scripts/anonymizeTestData.ts",
     "test:unit": "jest --config config/jest.config.js",
     "test:unit:without-file-buffer": "jest --config config/jest.config.js --testPathIgnorePatterns test/internal/FileBuffer.test.ts",
     "test:unit:file-buffer": "jest --config config/jest.config.js test/internal/FileBuffer.test.ts",

@@ -132,7 +132,7 @@ describe('FileSystemParser', () => {
 describe('FileSystem', () => {
   let serviceManager: ServiceManager = null
 
-  // setupHttpRecording()
+  setupHttpRecording()
 
   beforeEach(() => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
