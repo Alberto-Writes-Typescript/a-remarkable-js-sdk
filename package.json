@@ -48,6 +48,7 @@
   },
   "peerDependencies": {},
   "devDependencies": {
+    "@clack/prompts": "^0.7.0",
     "@pollyjs/adapter-fetch": "^6.0.6",
     "@pollyjs/adapter-node-http": "^6.0.6",
     "@pollyjs/core": "^6.0.6",
