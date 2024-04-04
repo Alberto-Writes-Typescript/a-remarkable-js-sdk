@@ -11,12 +11,14 @@ import RemarkableTokenPayload from './RemarkableTokenPayload'
  * token information and verify its validity.
  */
 export default class Session {
+  public readonly deviceId: string
   public readonly expiresAt: Date
   public readonly token: string
 
   constructor (sessionToken: string) {
     const sessionTokenPayload = new RemarkableTokenPayload(sessionToken)
 
+    this.deviceId = sessionTokenPayload.deviceId
     this.expiresAt = new Date(sessionTokenPayload.tokenExpirationTimestamp)
     this.token = sessionToken
   }
