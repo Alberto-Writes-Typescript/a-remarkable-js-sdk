@@ -1,12 +1,13 @@
-import { consola } from 'consola'
+// @ts-expect-error Expected error
+import path from 'path'
 import { execSync } from 'child_process'
 import * as fs from 'fs'
 import fsExtra from 'fs-extra'
 import minimist from 'minimist'
 import open from 'open'
 import { v4 as uuidv4 } from 'uuid'
-import { HashUrl, ServiceManager, Device, FileSystem } from '../src'
-import path from "path";
+import { HashUrl, ServiceManager, Device, FileSystem, type Session } from '../src'
+import { spinner, intro, outro, text, confirm, cancel } from '@clack/prompts'
 
 /**
  * Defines the list of arguments processed by the script. Each argument is represented
@@ -125,74 +126,110 @@ void (async () => {
   const environmentManager = new EnvironmentManager()
   const scriptArguments = new ScriptArguments()
 
-  consola.box('Unit Test Data Regeneration Script')
-  consola.info('Regenerates test data for unit tests: environment credentials & HTTP records')
+  intro('Regenerate test data for unit tests')
 
-  consola.start('I. Fetching reMarkable API Device Token')
-  let deviceToken = scriptArguments.deviceToken
-  if (deviceToken != null) {
-    environmentManager.setParameter('deviceToken', deviceToken)
-    consola.success('Device token found in script arguments!')
+  let device = null
+  if (scriptArguments.deviceToken != null) {
+    device = new Device(scriptArguments.deviceToken)
   } else {
-    await open('https://my.remarkable.com/device/remarkable')
-    const oneTimeCode = await consola.prompt('Request new one-time code to reMarkable Cloud (fetch in the TABLET -> + Pair device option) and paste it here: ', { type: 'text' })
-    const device = await Device.pair(uuidv4(), 'browser-chrome', oneTimeCode)
-    deviceToken = device.token
-    environmentManager.setParameter('deviceToken', deviceToken)
-    consola.success('Device token received!')
+    const hasToken = await confirm({ message: 'Do you have a new reMarkable one-time code at hand?' })
+
+    if (!hasToken) await open('https://my.remarkable.com/device/remarkable')
+    const oneTimeCode = await text({
+      message: 'Paste your one-time code (can be requested under \'+ Pair Device\' in the opened website). It will be used to generate a new device token:',
+      placeholder: 'zbmtjqqu',
+      validate: (value) => {
+        if (!value.match(/^[a-z]{8}$/)) return 'Invalid one-time code. one-time code must be 8 characters long and contain only lowercase letters.'
+      }
+    }) as string
+
+    const s = spinner()
+    s.start('Fetching reMarkable API Device Token')
+    device = await Device.pair(uuidv4(), 'browser-chrome', oneTimeCode)
+    s.stop('Device token received!')
   }
 
-  consola.start('II. Fetching reMarkable API Session Token')
-  const device = new Device(environmentManager.unitTestData.deviceToken)
-  const session = await device.connect()
-  consola.success('Session token received!')
+  environmentManager.setParameter('deviceId', device.id as string)
+  environmentManager.setParameter('deviceToken', device.token as string)
 
-  consola.start('III. Fetching reMarkable File System information')
-  const serviceManager = new ServiceManager(session)
+  const s = spinner()
+  s.start('Fetching reMarkable API Session Token')
+  const session = await device.connect()
+  s.stop('Device token received!')
+
+  environmentManager.setParameter('sessionToken', session.token as string)
+
+  const serviceManager = new ServiceManager(session as Session)
+
+  s.start('Fetching File Tree')
   const fileSystem = await FileSystem.initialize(serviceManager)
+  s.stop('File Tree received!')
+
+  environmentManager.setParameter('fileSystemDocumentsCount', fileSystem.documents.length)
+
+  s.start('Fetching Root folder Hash')
   const rootHashUrl = await HashUrl.fromHash('root', serviceManager)
   const rootHash = await (await rootHashUrl.fetch()).text()
-  consola.success('File System information received!')
+  s.stop('Root folder hash received!')
 
-  consola.start('III. Updating environment configuration with device & session information')
-  environmentManager.setParameter('deviceId', device.id)
-  environmentManager.setParameter('deviceToken', device.token)
-  environmentManager.setParameter('sessionToken', session.token)
   environmentManager.setParameter('rootFolderHash', rootHash)
-  environmentManager.setParameter('fileSystemDocumentsCount', fileSystem.documents.length)
+
+  const recreateConfirmation = await confirm({
+    message: `
+      The following parameters will be saved in your environment configuration:
+
+      - Device ID: ${environmentManager.unitTestData.deviceId}
+      - Device Token: ${environmentManager.unitTestData.deviceToken}
+      - Session Token: ${environmentManager.unitTestData.sessionToken}
+      - Root Folder Hash: ${environmentManager.unitTestData.rootFolderHash}
+      - File System Documents Count: ${environmentManager.unitTestData.fileSystemDocumentsCount}
+
+      Do you want to replace the existing environment configuration with this one, and
+      re-generate test data with these parameters?
+    `
+  })
+
+  if (!recreateConfirmation) {
+    cancel('Operation cancelled...')
+    process.exit(0)
+  }
+
   environmentManager.saveEnvironmentConfiguration()
-  consola.success(`Environment configuration updated. These are the new values:
-    - Device ID: ${environmentManager.unitTestData.deviceId}
-    
-    - Device Token: ${environmentManager.unitTestData.deviceToken}
-    
-    - Session Token: ${environmentManager.unitTestData.sessionToken}
-    
-    - Root Folder Hash: ${environmentManager.unitTestData.rootFolderHash}
-    
-    - File System Documents Count: ${environmentManager.unitTestData.fileSystemDocumentsCount}
-  `)
 
-  consola.start('IV. Regenerate HTTP records')
-  consola.warn(`Current HTTP records under ${HTTP_RECORDS_PATH} will be removed and re-generated`)
-  const confirmation = await consola.prompt('Do you want to continue?', { type: 'confirm' })
-  if (!confirmation) consola.error(new Error('HTTP record data re-generation cancelled. Exiting...'))
-
-  // Remove all HTTP records
+  s.start('Removing HTTP records')
   fsExtra.removeSync(HTTP_RECORDS_PATH)
+  s.stop('HTTP records removed!')
+
+  s.start('Running unit tests with new test environment parameters. Http records will be regenerated.')
   // Run test suite to generate new HTTP records (without buffer tests to avoid changing the file system in the process)
-  execSync('yarn test:unit:without-file-buffer')
+  execSync('yarn test:unit:without-file-buffer --silent')
   // Run buffer tests to generate missing HTTP records related to file upload
-  execSync('yarn test:unit:file-buffer')
-  // Anonymize HTTP records
+  execSync('yarn test:unit:file-buffer --silent')
+  s.stop('All test passed! New http records generated.')
+
+  s.start('Anonymizing http records')
   anonymizeHttpRecords()
+  s.stop('Http records anonymized!')
 
-  consola.success('HTTP records regenerated!')
-
-  consola.start('V. Remove reMarkable API Device Token')
-  consola.warn('Remove the generated token from your reMarkable account, so it cannot be used by unauthorized users.')
   await open('https://my.remarkable.com/device/browser')
-  await consola.prompt('Select yes once token is disabled', { type: 'confirm' })
 
-  consola.success('All done! You can now run the test suite to verify the changes.')
+  const tokenRemovalConfirmation = await confirm({
+    message: `
+      Test data successfully re-generated. Now make sure to remove the device
+      token previously generated/provided from your account, so it cannot be
+      used by unauthorized users.
+
+      This token will be present in the http records, meaning that there is
+      a potential risk of being leaked and used by unauthorized users.
+
+      Did you already remove the token?
+    `
+  })
+
+  if (!tokenRemovalConfirmation) {
+    cancel('Please remember to remove the token from your account. Exiting...')
+    process.exit(0)
+  }
+
+  outro('Test data for unit tests regenerated successfully! Your HTTP records and test environment variables have been updated')
 })()
