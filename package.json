@@ -30,7 +30,7 @@
     "dist"
   ],
   "scripts": {
-    "test:setup": "npx tsx --tsconfig ./config/tsconfig.json ./scripts/regenerateTestData.ts",
+    "test:setup": "npx tsx --tsconfig ./config/tsconfig.json ./scripts/newRegenerateTestData.ts",
     "test:unit": "jest --config config/jest.config.js",
     "test:unit:without-file-buffer": "jest --config config/jest.config.js --testPathIgnorePatterns test/internal/FileBuffer.test.ts",
     "test:unit:file-buffer": "jest --config config/jest.config.js test/internal/FileBuffer.test.ts",
@@ -56,6 +56,7 @@
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
+    "consola": "^3.2.3",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-config-standard-with-typescript": "^43.0.1",
