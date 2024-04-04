@@ -52,11 +52,11 @@ describe('Device', () => {
       async () => {
         const device = new Device(process.env.SAMPLE_PAIR_TOKEN)
 
-        await device.connect()
+        const session = await device.connect()
 
-        expect(device.session).toBeInstanceOf(Session)
+        expect(session).toBeInstanceOf(Session)
 
-        const sessionTokenPayload = new RemarkableTokenPayload(device.session.token)
+        const sessionTokenPayload = new RemarkableTokenPayload(session.token)
         expect(sessionTokenPayload.deviceId).toBe(process.env.SAMPLE_UUID)
         expect(sessionTokenPayload.deviceDescription).toBe('browser-chrome')
       },

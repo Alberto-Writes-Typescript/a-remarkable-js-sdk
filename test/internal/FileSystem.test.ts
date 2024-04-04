@@ -1,6 +1,6 @@
 import Device from '../../src/authentication/Device'
 import FileSystem, { type DocumentPayload, FileSystemParser, type FolderPayload } from '../../src/internal/FileSystem'
-import ServiceManager from '../../src/ServiceManager'
+import ServiceManager from '../../src/serviceDiscovery/ServiceManager'
 
 describe('FileSystemParser', () => {
   /**
@@ -136,9 +136,9 @@ describe('FileSystem', () => {
   beforeEach(async () => {
     const device = new Device(process.env.SAMPLE_PAIR_TOKEN)
 
-    await device.connect()
+    const session = await device.connect()
 
-    serviceManager = new ServiceManager(device)
+    serviceManager = new ServiceManager(session)
   })
 
   describe('static initialize', () => {
@@ -146,7 +146,7 @@ describe('FileSystem', () => {
       const fileSystem = await FileSystem.initialize(serviceManager)
 
       expect(fileSystem.folders.length).toBe(37)
-      expect(fileSystem.documents.length).toBe(113)
+      expect(fileSystem.documents.length).toBe(116)
     })
   })
 })

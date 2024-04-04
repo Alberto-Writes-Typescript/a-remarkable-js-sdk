@@ -1,6 +1,6 @@
 import Device from '../../src/authentication/Device'
 import FileBuffer from '../../src/./internal/FileBuffer'
-import ServiceManager from '../../src/ServiceManager'
+import ServiceManager from '../../src/serviceDiscovery/ServiceManager'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
 
 describe('FileBuffer', () => {
@@ -11,9 +11,9 @@ describe('FileBuffer', () => {
   beforeEach(async () => {
     const device = new Device(process.env.SAMPLE_PAIR_TOKEN)
 
-    await device.connect()
+    const session = await device.connect()
 
-    serviceManager = new ServiceManager(device)
+    serviceManager = new ServiceManager(session)
   })
 
   describe('.upload', () => {
