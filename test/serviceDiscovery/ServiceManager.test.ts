@@ -10,7 +10,7 @@ describe('ServiceManager', () => {
   setupHttpRecording()
 
   beforeEach(() => {
-    session = new Session(process.env.SAMPLE_SESSION_TOKEN)
+    session = new Session(global.unitTestParams.sessionToken as string)
     serviceManager = new ServiceManager(session)
   })
 

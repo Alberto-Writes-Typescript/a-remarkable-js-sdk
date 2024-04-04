@@ -21,7 +21,7 @@ import * as NodeHttpAdapter from '@pollyjs/adapter-node-http'
  */
 dotenv.config({ path: '.env.test' })
 
-global.unitTestParams = JSON.parse(process.env.UNIT_TEST_DATA)
+global.unitTestParams = JSON.parse(Buffer.from(process.env.UNIT_TEST_DATA, 'base64').toString('utf8'))
 
 /**
  * Polly.js Configuration

@@ -24,15 +24,13 @@ jobs:
           node-version: '21.5.0'
           cache: 'yarn'
 
-      - name: Set up environment variables
-        run: |
-          echo UNIT_TEST_DATA=${{ secrets.UNIT_TEST_DATA }} >> .env.test
-
       - name: Install Dependencies
         run: yarn install --pure-lockfile
 
       - name: Run tests
         run: yarn test
+        env:
+          UNIT_TEST_DATA: ${{ secrets.UNIT_TEST_DATA }}
   lint:
     environment: test
     runs-on: ubuntu-latest
@@ -50,7 +48,7 @@ jobs:
         run: yarn install --pure-lockfile
 
       - name: Load linter cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/eslint/
           key: ${{ runner.os }}-eslint-${{ hashFiles('**/package-lock.json', '**/.eslintrc') }}
