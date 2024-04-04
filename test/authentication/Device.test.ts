@@ -10,8 +10,7 @@ describe('Device', () => {
 
   describe('constructor', () => {
     it('given valid device token, initializes Device instance', () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const device = new Device(global.unitTestParams.deviceToken)
+      const device = new Device(global.unitTestParams.deviceToken as string)
 
       expect(device.id).toBe(global.unitTestParams.deviceId)
       expect(device.description).toBe('browser-chrome')
@@ -34,7 +33,7 @@ describe('Device', () => {
     it(
       'given valid pair token, updates Device with new session token',
       async () => {
-        const device = new Device(global.unitTestParams.deviceToken)
+        const device = new Device(global.unitTestParams.deviceToken as string)
 
         const session = await device.connect()
 
