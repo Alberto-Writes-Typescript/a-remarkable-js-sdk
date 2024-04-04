@@ -46,7 +46,13 @@ const UNIT_TEST_DATA_KEY = 'UNIT_TEST_DATA'
  * Handles test environment variables
  */
 class EnvironmentManager {
-  public unitTestData: Record<string, string | number>
+  public unitTestData: {
+    deviceId: string
+    deviceToken: string
+    sessionToken: string
+    rootFolderHash: string
+    fileSystemDocumentsCount: number
+  }
 
   constructor () {
     const rawUnitTestData = fs.readFileSync(ENVIRONMENT_CONFIGURATION_FILE, 'utf8')
@@ -62,7 +68,7 @@ class EnvironmentManager {
     this.unitTestData = JSON.parse(rawUnitTestData[1])
   }
 
-  setParameter (key: string, value: string): void {
+  setParameter (key: string, value: string | number): void {
     this.unitTestData[key] = value
   }
 
@@ -117,7 +123,7 @@ void (async () => {
   environmentManager.setParameter('fileSystemDocumentsCount', fileSystem.documents.length)
   environmentManager.saveEnvironmentConfiguration()
   consola.success(`Environment configuration updated. These are the new values:
-    - Device ID: ${environmentManager.unitTestData.uuid}
+    - Device ID: ${environmentManager.unitTestData.deviceId}
     
     - Device Token: ${environmentManager.unitTestData.deviceToken}
     
