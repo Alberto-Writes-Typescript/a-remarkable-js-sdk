@@ -5,21 +5,15 @@ import { InvalidRemarkableTokenError } from '../../src/authentication/Remarkable
 import Session from '../../src/authentication/Session'
 
 describe('Device', () => {
-  let testParameters = null
-
-  beforeEach(() => {
-    testParameters = JSON.parse(process.env.UNIT_TEST_DATA)
-  })
-
   // Enables Polly.js to record and replay HTTP requests for each test
   setupHttpRecording()
 
   describe('constructor', () => {
     it('given valid device token, initializes Device instance', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const device = new Device(testParameters.deviceToken)
+      const device = new Device(global.unitTestParams.deviceToken)
 
-      expect(device.id).toBe(testParameters.deviceId)
+      expect(device.id).toBe(global.unitTestParams.deviceId)
       expect(device.description).toBe('browser-chrome')
     })
 
@@ -40,14 +34,13 @@ describe('Device', () => {
     it(
       'given valid pair token, updates Device with new session token',
       async () => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        const device = new Device(testParameters.deviceToken)
+        const device = new Device(global.unitTestParams.deviceToken)
 
         const session = await device.connect()
 
         expect(session).toBeInstanceOf(Session)
 
-        expect(session.deviceId).toBe(testParameters.deviceId)
+        expect(session.deviceId).toBe(global.unitTestParams.deviceId)
       },
       30000
     )

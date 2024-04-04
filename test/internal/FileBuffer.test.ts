@@ -4,16 +4,13 @@ import { setupHttpRecording } from '../helpers/pollyHelpers'
 import { Session } from '../../src'
 
 describe('FileBuffer', () => {
-  let testParameters = null
   let serviceManager: ServiceManager = null
 
   setupHttpRecording()
 
   beforeEach(() => {
-    testParameters = JSON.parse(process.env.UNIT_TEST_DATA)
-
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const session = new Session(testParameters.sessionToken)
+    const session = new Session(global.unitTestParams.sessionToken)
 
     serviceManager = new ServiceManager(session)
   })
