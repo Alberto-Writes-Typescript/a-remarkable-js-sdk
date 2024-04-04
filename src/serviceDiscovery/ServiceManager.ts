@@ -1,7 +1,7 @@
-import type Device from './authentication/Device'
-import NodeClient from './net/NodeClient'
-import type HttpClient from './net/HttpClient'
-import { type HeadersPayload } from './net/HttpClient/Headers'
+import NodeClient from '../net/NodeClient'
+import type HttpClient from '../net/HttpClient'
+import { type HeadersPayload } from '../net/HttpClient/Headers'
+import { type Session } from '../authentication'
 
 const SERVICE_DISCOVERY_HOST: string = 'https://service-manager-production-dot-remarkable-production.appspot.com'
 
@@ -51,14 +51,14 @@ export default class ServiceManager {
     return new NodeClient('https://webapp-prod.cloud.remarkable.engineering', headers)
   }
 
-  public readonly device: Device
+  public readonly session: Session
   public readonly httpClient: HttpClient
 
-  constructor (device: Device) {
-    this.device = device
+  constructor (session: Session) {
+    this.session = session
     this.httpClient = new NodeClient(
       SERVICE_DISCOVERY_HOST,
-      { Authorization: `Bearer ${this.device.session.token}` }
+      { Authorization: `Bearer ${this.session.token}` }
     )
   }
 
@@ -84,21 +84,9 @@ export default class ServiceManager {
       resolve(
         new NodeClient(
           'https://internal.cloud.remarkable.com',
-          { Authorization: `Bearer ${this.device.session.token}` }
+          { Authorization: `Bearer ${this.session.token}` }
         )
       )
-
-      reject(new Error('Not implemented'))
-    })
-  }
-
-  /**
-   * Returns `HttpClient` configured with host and header options to
-   * perform requests to the reMarkable production API.
-   */
-  public async productionHttpClient (): Promise<HttpClient> {
-    return await new Promise((resolve, reject = () => {}) => {
-      resolve(ServiceManager.productionHttpClient({ Authorization: `Bearer ${this.device.token}` }))
 
       reject(new Error('Not implemented'))
     })
@@ -118,7 +106,7 @@ export default class ServiceManager {
 
     return new NodeClient(
       `https://${discoveryPayload.Host}`,
-      { Authorization: `Bearer ${this.device.session.token}` }
+      { Authorization: `Bearer ${this.session.token}` }
     )
   }
 }

@@ -4,7 +4,7 @@ import FileBuffer from './internal/FileBuffer'
 import HashUrl from './internal/HashUrl'
 import HttpClient from './net/HttpClient'
 import NodeClient from './net/NodeClient'
-import ServiceManager from './ServiceManager'
+import ServiceManager from './serviceDiscovery/ServiceManager'
 
 export {
   Device, type DeviceDescription, Session,

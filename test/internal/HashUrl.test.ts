@@ -1,6 +1,6 @@
 import Device from '../../src/authentication/Device'
 import HashUrl, { ExpiredHashUrlError, type HashPathPayload } from '../../src/internal/HashUrl'
-import ServiceManager from '../../src/ServiceManager'
+import ServiceManager from '../../src/serviceDiscovery/ServiceManager'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
 
 function disableHashUrlExpiration (): jest.SpyInstance {
@@ -19,9 +19,9 @@ describe('HashUrl', () => {
   beforeEach(async () => {
     const device = new Device(process.env.SAMPLE_PAIR_TOKEN)
 
-    await device.connect()
+    const session = await device.connect()
 
-    serviceManager = new ServiceManager(device)
+    serviceManager = new ServiceManager(session)
   })
 
   describe('static fromRootHash', () => {

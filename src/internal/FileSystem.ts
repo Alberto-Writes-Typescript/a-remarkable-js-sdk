@@ -1,7 +1,7 @@
 import Document from './Document'
 import Folder from './Folder'
 import type HttpClient from '../net/HttpClient'
-import type ServiceManager from '../ServiceManager'
+import type ServiceManager from '../serviceDiscovery/ServiceManager'
 
 export interface DocumentPayload {
   hash: string

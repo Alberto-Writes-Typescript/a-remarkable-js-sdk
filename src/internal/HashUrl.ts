@@ -1,5 +1,5 @@
 import type HttpClient from '../net/HttpClient'
-import type ServiceManager from '../ServiceManager'
+import type ServiceManager from '../serviceDiscovery/ServiceManager'
 import NodeClient from '../net/NodeClient'
 
 /**

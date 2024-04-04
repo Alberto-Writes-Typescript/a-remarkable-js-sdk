@@ -4,7 +4,7 @@ import { fromByteArray } from 'base64-js'
 
 import FileBufferType from './FileBufferType'
 import type HttpClient from '../net/HttpClient'
-import type ServiceManager from '../ServiceManager'
+import type ServiceManager from '../serviceDiscovery/ServiceManager'
 
 export class FileNoUploadedError extends Error {
   constructor () {

@@ -1,6 +1,6 @@
 import type HttpClient from '../net/HttpClient'
 import { type DeviceDescription } from './DeviceDescription'
-import ServiceManager from '../ServiceManager'
+import ServiceManager from '../serviceDiscovery/ServiceManager'
 import RemarkableTokenPayload from './RemarkableTokenPayload'
 import Session from './Session'
 
@@ -60,11 +60,6 @@ export default class Device {
    * reMarkable Cloud API token associated to `device`
    */
   public readonly token: string
-  /**
-   * reMarkable Cloud API token required on every request to the API
-   * (expect authentication requests) for user authentication.
-   */
-  public session?: Session = null
 
   private readonly httpClient: HttpClient
 
@@ -85,15 +80,13 @@ export default class Device {
    * can be used to perform authenticated requests to the reMarkable Cloud API
    * in behalf of the user account associated to the `device`.
    */
-  public async connect (): Promise<Device> {
+  public async connect (): Promise<Session> {
     const connectResponse = await this.httpClient.post('/token/json/2/user/new', {})
 
     if (connectResponse.status !== 200) {
       throw new Error(`Failed to connect with Remarkable API: ${connectResponse.statusText}`)
     }
 
-    this.session = new Session(await connectResponse.text())
-
-    return this
+    return new Session(await connectResponse.text())
   }
 }
