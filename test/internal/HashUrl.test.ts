@@ -1,8 +1,7 @@
-import Device from '../../src/authentication/Device'
 import HashUrl, { ExpiredHashUrlError, type HashPathPayload } from '../../src/internal/HashUrl'
 import ServiceManager from '../../src/serviceDiscovery/ServiceManager'
 import { setupHttpRecording } from '../helpers/pollyHelpers'
-import {Session} from "../../src";
+import { Session } from '../../src'
 
 function disableHashUrlExpiration (): jest.SpyInstance {
   return jest.spyOn(HashUrl.prototype, 'expired', 'get').mockReturnValue(false)
@@ -13,16 +12,13 @@ function enableHashUrlExpiration (spy: jest.SpyInstance): void {
 }
 
 describe('HashUrl', () => {
-  let testParameters = null
   let serviceManager: ServiceManager = null
 
   setupHttpRecording()
 
   beforeEach(() => {
-    testParameters = JSON.parse(process.env.UNIT_TEST_DATA)
-
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const session = new Session(testParameters.sessionToken)
+    const session = new Session(global.unitTestParams.sessionToken)
 
     serviceManager = new ServiceManager(session)
   })
@@ -34,7 +30,7 @@ describe('HashUrl', () => {
       const rootFolderHashUrl = await HashUrl.fromRootHash(serviceManager)
 
       // Regenerate when new requests are recorded
-      expect(rootFolderHashUrl.relativePath).toBe(testParameters.rootFolderHash)
+      expect(rootFolderHashUrl.relativePath).toBe(global.unitTestParams.rootFolderHash)
       expect(rootFolderHashUrl.url.host).toBe('storage.googleapis.com')
       expect(rootFolderHashUrl.method).toBe('GET')
 
@@ -47,10 +43,10 @@ describe('HashUrl', () => {
       const spy: jest.SpyInstance = disableHashUrlExpiration()
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const folderHashUrl = await HashUrl.fromHash(testParameters.rootFolderHash, serviceManager)
+      const folderHashUrl = await HashUrl.fromHash(global.unitTestParams.rootFolderHash, serviceManager)
 
       // Regenerate when new requests are recorded
-      expect(folderHashUrl.relativePath).toBe(testParameters.rootFolderHash)
+      expect(folderHashUrl.relativePath).toBe(global.unitTestParams.rootFolderHash)
       expect(folderHashUrl.url.host).toBe('storage.googleapis.com')
       expect(folderHashUrl.method).toBe('GET')
 
@@ -63,7 +59,7 @@ describe('HashUrl', () => {
       const spy: jest.SpyInstance = disableHashUrlExpiration()
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const rootFolderHashUrl = await HashUrl.fromHash(testParameters.rootFolderHash, serviceManager)
+      const rootFolderHashUrl = await HashUrl.fromHash(global.unitTestParams.rootFolderHash, serviceManager)
 
       const response = await rootFolderHashUrl.fetch()
       const content = await response.text()
