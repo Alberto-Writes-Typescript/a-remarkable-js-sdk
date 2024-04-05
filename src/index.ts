@@ -1,7 +1,7 @@
 import { Device, type DeviceDescription, Session } from './authentication'
 import {
   Document,
-  FileNoUploadedError,
+  FileNotUploadedError,
   FileBuffer,
   UnsupportedFileExtensionError,
   FileBufferType,
@@ -16,7 +16,7 @@ import ServiceManager from './serviceDiscovery/ServiceManager'
 export {
   Device, type DeviceDescription, Session,
   Document,
-  FileNoUploadedError,
+  FileNotUploadedError,
   FileBuffer,
   UnsupportedFileExtensionError,
   FileBufferType,

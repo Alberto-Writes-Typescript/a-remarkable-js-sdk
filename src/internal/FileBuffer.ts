@@ -6,21 +6,47 @@ import FileBufferType from './FileBufferType'
 import type HttpClient from '../net/HttpClient'
 import type ServiceManager from '../serviceDiscovery/ServiceManager'
 
-export class FileNoUploadedError extends Error {
-  constructor () {
-    super('FileBuffer not uploaded to reMarkable Cloud')
-    this.name = 'FileNoUploadedError'
-  }
-}
+export class FileNotUploadedError extends Error {}
 
 /**
  * Response payload returned by reMarkable Cloud after uploading a file
  */
-export interface UploadResponse {
+export interface UploadResponsePayload {
   docID: string
   hash: string
 }
 
+/**
+ * Represents a reference to an uploaded { @link Document }
+ *
+ * In the reMarkable Cloud API, documents are identified by a unique
+ * ID and Hash. While the ID is always the same, the hash changes
+ * conforming changes are pushed to the user account file system.
+ *
+ * The { @link DocumentReference } class parses the reMarkable Cloud
+ * API success upload response and returns a reference to the uploaded
+ * document.
+ */
+export class DocumentReference {
+  public readonly id: string
+  public readonly hash: string
+
+  constructor (id: string, hash: string) {
+    this.id = id
+    this.hash = hash
+  }
+}
+
+/**
+ * Represents a file content, encoded as a buffer, ready to be uploaded
+ * to reMarkable Cloud.
+ *
+ * Encapsulates the logic to handle file upload. Given the ArrayBuffer
+ * content of a file, it verifies the type compatibility with the
+ * reMarkable Cloud API and provides an interface to upload the file
+ * and get a reference to its cloud equivalent when successfully
+ * pushed.
+ */
 export default class FileBuffer {
   /**
    * Creates a FileBuffer from a local file
@@ -37,12 +63,25 @@ export default class FileBuffer {
     return new FileBuffer(name, buffer, serviceManager)
   }
 
-  private httpClient?: HttpClient
-  private uploadResponse?: UploadResponse
+  /**
+   * Creates FileBuffer from file ArrayBuffer and uploads it
+   *
+   * @param name - File name
+   * @param buffer - File content
+   * @param serviceManager
+   */
+  static async upload (name: string, buffer: ArrayBuffer, serviceManager: ServiceManager): Promise<FileBuffer> {
+    const fileBuffer = new FileBuffer(name, buffer, serviceManager)
+    await fileBuffer.upload()
+    return fileBuffer
+  }
 
-  private readonly name: string
-  private readonly buffer: ArrayBuffer
-  private readonly type?: FileBufferType
+  public readonly name: string
+  public readonly buffer: ArrayBuffer
+  public readonly type: FileBufferType
+  public documentReference?: DocumentReference
+
+  private httpClient?: HttpClient
   private readonly serviceManager: ServiceManager
 
   constructor (name: string, buffer: ArrayBuffer, serviceManager: ServiceManager) {
@@ -54,26 +93,10 @@ export default class FileBuffer {
   }
 
   get uploaded (): boolean {
-    return this.uploadResponse != null
+    return this.documentReference != null
   }
 
-  get remarkableDocumentId (): string {
-    if (this.uploaded) {
-      return this.uploadResponse.docID
-    } else {
-      throw new FileNoUploadedError()
-    }
-  }
-
-  get remarkableDocumentHash (): string {
-    if (this.uploaded) {
-      return this.uploadResponse.hash
-    } else {
-      throw new FileNoUploadedError()
-    }
-  }
-
-  async upload (): Promise<unknown> {
+  async upload (): Promise<DocumentReference> {
     const httpClient = await this.internalCloudHttpClient()
 
     const response = await httpClient.post(
@@ -87,12 +110,14 @@ export default class FileBuffer {
     )
 
     if (response.status !== 201) {
-      throw new Error(`Failed to find Remarkable API Storage Service: ${await response.text()}`)
+      throw new FileNotUploadedError(`Failed to upload file to reMarkable Cloud: ${await response.text()}`)
     }
 
-    this.uploadResponse = await response.json() as UploadResponse
+    const uploadResponsePayload = await response.json() as UploadResponsePayload
 
-    return this.uploadResponse
+    this.documentReference = new DocumentReference(uploadResponsePayload.docID, uploadResponsePayload.hash)
+
+    return this.documentReference
   }
 
   private async internalCloudHttpClient (): Promise<HttpClient> {
