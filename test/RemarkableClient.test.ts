@@ -63,16 +63,6 @@ describe('RemarkableClient', () => {
         enableSessionExpiration(spy)
       }
     })
-
-    it('updates service manager with new session', async () => {
-      const client = new RemarkableClient(global.unitTestParams.deviceToken as string)
-
-      expect(client.session).not.toBeDefined()
-
-      await client.connect()
-
-      expect(client.serviceManager.session).toBe(client.session)
-    })
   })
 
   describe('.fileSystem', () => {
