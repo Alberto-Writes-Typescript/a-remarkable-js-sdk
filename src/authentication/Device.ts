@@ -84,7 +84,7 @@ export default class Device {
     const connectResponse = await this.httpClient.post('/token/json/2/user/new', {})
 
     if (connectResponse.status !== 200) {
-      throw new Error(`Failed to connect with Remarkable API: ${connectResponse.statusText}`)
+      throw new Error(`Failed to connect with Remarkable API: ${await connectResponse.text()}`)
     }
 
     return new Session(await connectResponse.text())
