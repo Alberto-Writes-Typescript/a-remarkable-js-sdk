@@ -52,6 +52,8 @@ class EnvironmentManager {
     deviceToken: string
     sessionToken: string
     rootFolderHash: string
+    sampleDocumentId: string
+    sampleFolderId: string
     fileSystemDocumentsCount: number
   }
 
@@ -174,6 +176,17 @@ void (async () => {
 
   environmentManager.setParameter('rootFolderHash', rootHash)
 
+  s.start('Fetching sample document')
+  const sampleDocument = fileSystem.documents[0]
+  s.stop('Sample document received!')
+
+  s.start('Fetching sample folder')
+  const sampleFolder = fileSystem.folders[0]
+  s.stop('Sample folder received!')
+
+  environmentManager.setParameter('sampleDocumentId', sampleDocument.id)
+  environmentManager.setParameter('sampleFolderId', sampleFolder.id)
+
   const recreateConfirmation = await confirm({
     message: `
       The following parameters will be saved in your environment configuration:
@@ -182,6 +195,8 @@ void (async () => {
       - Device Token: ${environmentManager.parameters.deviceToken}
       - Session Token: ${environmentManager.parameters.sessionToken}
       - Root Folder Hash: ${environmentManager.parameters.rootFolderHash}
+      - Sample Document ID: ${environmentManager.parameters.sampleDocumentId}
+      - Sample Folder ID: ${environmentManager.parameters.sampleFolderId}
       - File System Documents Count: ${environmentManager.parameters.fileSystemDocumentsCount}
 
       Do you want to replace the existing environment configuration with this one, and

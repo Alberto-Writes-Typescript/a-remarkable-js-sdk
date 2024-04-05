@@ -102,7 +102,7 @@ describe('RemarkableClient', () => {
     })
   })
 
-  describe('.upload', () => {
+  describe('.document', () => {
     let client: RemarkableClient = null
 
     let spy: jest.SpyInstance
@@ -120,14 +120,47 @@ describe('RemarkableClient', () => {
       enableSessionExpiration(spy)
     })
 
-    it('if file buffer represents a PDF, uploads file to document storage', async () => {
-    }, 100000)
+    it('if valid document ID is provided, returns document', async () => {
+      const document = await client.document(global.unitTestParams.sampleDocumentId as string)
 
-    it('if file buffer represents an ePub, uploads file to document storage', async () => {
+      expect(document.id).toBe(global.unitTestParams.sampleDocumentId)
     })
 
-    it('if file buffer represents file with incompatible format, throws error', async () => {
+    it('if invalid document ID is provided, returns no document', async () => {
+      const document = await client.document('invalid document ID')
 
+      expect(document).not.toBeDefined()
+    })
+  })
+
+  describe('.folder', () => {
+    let client: RemarkableClient = null
+
+    let spy: jest.SpyInstance
+
+    beforeEach(() => {
+      client = new RemarkableClient(
+        global.unitTestParams.deviceToken as string,
+        global.unitTestParams.sessionToken as string
+      )
+
+      spy = disableSessionExpiration(false)
+    })
+
+    afterEach(() => {
+      enableSessionExpiration(spy)
+    })
+
+    it('if valid folder ID is provided, returns folder', async () => {
+      const folder = await client.folder(global.unitTestParams.sampleFolderId as string)
+
+      expect(folder.id).toBe(global.unitTestParams.sampleFolderId)
+    })
+
+    it('if invalid folder ID is provided, returns no folder', async () => {
+      const folder = await client.folder('invalid folder ID')
+
+      expect(folder).not.toBeDefined()
     })
   })
 })
