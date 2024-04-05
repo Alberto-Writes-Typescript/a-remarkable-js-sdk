@@ -1,4 +1,3 @@
-import { promises as fs } from 'fs'
 import RemarkableClient from '../src/RemarkableClient'
 import { Session } from '../src/authentication'
 import { setupHttpRecording } from './helpers/pollyHelpers'
