@@ -1,5 +1,8 @@
 import type Document from './Document'
 
+/**
+ * Represents a reMarkable Cloud folder
+ */
 export default class Folder {
   id: string
   hash: string
@@ -17,5 +20,9 @@ export default class Folder {
     this.parentFolder = parentFolder
     this.folders = folders
     this.documents = documents
+  }
+
+  get root (): boolean {
+    return !this.parentFolder
   }
 }

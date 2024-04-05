@@ -1,5 +1,8 @@
 import type Folder from './Folder'
 
+/**
+ * Represents a reMarkable Cloud document
+ */
 export default class Document {
   id: string
   hash: string

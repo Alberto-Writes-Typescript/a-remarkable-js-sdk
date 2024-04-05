@@ -3,6 +3,11 @@ import Folder from './Folder'
 import type HttpClient from '../net/HttpClient'
 import type ServiceManager from '../serviceDiscovery/ServiceManager'
 
+/**
+ * reMarkable Cloud API {@link Document} payload
+ *
+ * Payload returned by API when requesting documents to `/doc/v2/files` endpoint
+ */
 export interface DocumentPayload {
   hash: string
   id: string
@@ -15,6 +20,11 @@ export interface DocumentPayload {
   pinned: boolean
 }
 
+/**
+ * reMarkable Cloud API {@link Folder} payload
+ *
+ * Payload returned by API when requesting folders to `/doc/v2/files` endpoint
+ */
 export interface FolderPayload {
   id: string
   hash: string
@@ -25,6 +35,14 @@ export interface FolderPayload {
   pinned: boolean
 }
 
+/**
+ * Parses reMarkable Cloud API file system payload
+ *
+ * Maps the response payload from the API `/doc/v2/files` endpoint to a
+ * set of {@link Document} and {@link Folder} instances. Recreates the
+ * file system tree hierarchy, assigning to each {@link Document} and
+ * folder its parent {@link Folder}.
+ */
 export class FileSystemParser {
   documentPayloads: DocumentPayload[]
   folderPayloads: FolderPayload[]
@@ -99,6 +117,20 @@ export class FileSystemParser {
   }
 }
 
+/**
+ * Represents the reMarkable Cloud API file system. Provides an
+ * interface to retrieve the list of {@link Document}s and {@link Folder}s
+ * in a user reMarkable Cloud account and navigate through them.
+ *
+ * The reMarkable API `/doc/v2/files` endpoint returns a list of all files
+ * in a user reMarkable Cloud account with their respective metadata.
+ *
+ * The `FileSystem` class parses the API response and maps the file system
+ * hierarchy to a set of {@link Document} and {@link Folder} instances,
+ * providing a virtual recreation of the actual file system tree, which
+ * can be then used to navigate through it in the similar way as in any
+ * other file system.
+ */
 export default class FileSystem {
   static async initialize (serviceManager: ServiceManager): Promise<FileSystem> {
     const httpClient: HttpClient = await serviceManager.internalCloudHttpClient()
@@ -118,11 +150,25 @@ export default class FileSystem {
     return new FileSystem(fileSystemParser.documents, fileSystemParser.folders)
   }
 
+  /**
+   * List of all {@link Document}s in user reMarkable Cloud account
+   */
   documents: Document[] = []
+  /**
+   * List of all {@link Folder}s in user reMarkable Cloud account
+   */
   folders: Folder[] = []
 
   constructor (documents: Document[], folders: Folder[]) {
     this.documents = documents
     this.folders = folders
+  }
+
+  document (id: string): Document | undefined {
+    return this.documents.find((document) => document.id === id)
+  }
+
+  folder (id: string): Folder | undefined {
+    return this.folders.find((folder) => folder.id === id)
   }
 }
