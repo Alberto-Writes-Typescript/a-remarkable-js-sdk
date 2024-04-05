@@ -3,12 +3,7 @@
  * raised when an `ArrayBuffer` with an unsupported file extension is passed to
  * the `FileBufferType` class.
  */
-export class UnsupportedFileExtensionError extends Error {
-  constructor () {
-    super('Unsupported file extension for given buffer. Only .pdf and .epub extensions supported')
-    this.name = 'UnsupportedFileExtensionError'
-  }
-}
+export class UnsupportedFileExtensionError extends Error {}
 
 /**
  * Each `ArrayBuffer` presents a specific signature representing its corresponding
@@ -28,6 +23,18 @@ const MIME_TYPE_MAPS = {
   epub: 'application/epub+zip'
 }
 
+/**
+ * Represents the type of the file associated to its buffer.
+ *
+ * It is possible to identify the type of a file by examining its buffer.
+ * This class encapsulates the logic to infer a files type from its
+ * respective buffer.
+ *
+ * Since the reMarkable Cloud API only allows uploading `.pdf` and `.epub`
+ * files, the class only handles buffers with that extension, raising an
+ * { @link UnsupportedFileExtensionError } when a buffer from an unsupported
+ * file extension is passed.
+ */
 export default class FileBufferType {
   static extension (buffer: ArrayBuffer): 'pdf' | 'epub' {
     const signature = (new Uint8Array(buffer)).slice(0, 4)
@@ -38,7 +45,7 @@ export default class FileBufferType {
       }
     }
 
-    throw new UnsupportedFileExtensionError()
+    throw new UnsupportedFileExtensionError('Unsupported file extension. Only .pdf and .epub files are supported.')
   }
 
   static mimeType (buffer: ArrayBuffer): string {
@@ -46,7 +53,13 @@ export default class FileBufferType {
     return MIME_TYPE_MAPS[type]
   }
 
+  /**
+   * Buffer file extension
+   */
   readonly extension: string
+  /**
+   * MIME type of the buffer file
+   */
   readonly mimeType: string
 
   constructor (buffer: ArrayBuffer) {
