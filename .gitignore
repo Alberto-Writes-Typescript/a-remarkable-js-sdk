@@ -10,3 +10,6 @@ lib/
 
 # Ignore test environment variables
 .env.test
+
+# Generated during version bumping
+RELEASE_NOTES.md
