@@ -1,3 +1,4 @@
+// @ts-expect-error - Expected error
 import path from 'path'
 import { execSync } from 'child_process'
 import * as fs from 'fs'

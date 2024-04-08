@@ -1,6 +1,8 @@
+import { execSync } from 'child_process'
+import * as fs from 'fs'
+import open from 'open'
 // @ts-expect-error - Expected error
 import path from 'path'
-import * as fs from 'fs'
 import { inc } from 'semver'
 import { spinner, intro, outro, confirm, cancel, select } from '@clack/prompts'
 
@@ -43,12 +45,15 @@ class ChangelogManager {
   }
 
   bump (newVersion: string): void {
-    try {
-      this.addNewVersionSection(newVersion)
-      this.updateTagComparisonLinks(newVersion)
-    } catch (error) {
-      console.error('Error updating CHANGELOG.md:', error)
-    }
+    this.addNewVersionSection(newVersion)
+    this.updateTagComparisonLinks(newVersion)
+  }
+
+  changelog (version: string): string {
+    const lines = this.content.split('\n')
+    const start = lines.findIndex(line => line.includes(`## [${version}]`))
+    const end = lines.slice(start + 2).findIndex(line => line.trim() === '') + start + 2
+    return lines.slice(start, end).join('\n')
   }
 
   private addNewVersionSection (newVersion: string): void {
@@ -117,5 +122,19 @@ void (async () => {
   changelogManager.bump(newVersion)
   s.stop('CHANGELOG.md updated!')
 
-  outro('Test data for unit tests regenerated successfully! Your HTTP records and test environment variables have been updated')
+  s.start('Pushing changes to git')
+  execSync('git add package.json CHANGELOG.md')
+  execSync(`git commit -m "bump to v${newVersion}"`)
+  execSync('git push')
+  s.stop('Changes pushed to git!')
+
+  outro(`
+    Everything up to date!
+    
+    To trigger the release process:
+    1. Rebase commit to main branch (if not rebased already).
+    2. Create new release (you can find the pre-filled release form automatically opened in your web browser).
+  `)
+
+  await open(`https://github.com/Alberto-Writes-Typescript/a-remarkable-js-sdk/releases/new?tag=v${newVersion}&title=v${newVersion}&body=${encodeURIComponent(changelogManager.changelog(newVersion))}`)
 })()
