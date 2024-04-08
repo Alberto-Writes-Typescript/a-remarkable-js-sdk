@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2024-05-05
+
 ### Added
 - Device connection with reMarkable Cloud.
 - User session authentication with reMarkable Cloud.
 - PDF & ePub file upload to reMarkable Cloud.
 - File Tree navigator.
+
+---
+[unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.1.0...HEAD
+[0.1.0]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/v0.1.0
