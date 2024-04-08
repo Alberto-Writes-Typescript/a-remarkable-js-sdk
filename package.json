@@ -1,6 +1,6 @@
 {
   "name": "a-remarkable-js-sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "a reMarkable Cloud API wrapper written in TypeScript",
   "keywords": [
     "reMarkable",
@@ -39,7 +39,8 @@
     "build": "yarn build:tsup",
     "lint:eslint": "yarn run eslint src test -c config/.eslintrc --ignore-path config/.eslintignore",
     "lint:tsc": "tsc --noEmit -p ./config",
-    "lint": "yarn run lint:eslint && yarn run lint:tsc"
+    "lint": "yarn run lint:eslint && yarn run lint:tsc",
+    "version:bump": "npx tsx --tsconfig ./config/tsconfig.json ./scripts/bumpPackageVersion.ts"
   },
   "dependencies": {
     "base64-js": "^1.5.1",
@@ -72,6 +73,7 @@
     "open": "^10.1.0",
     "path": "^0.12.7",
     "readline-sync": "^1.4.10",
+    "semver": "^7.6.0",
     "ts-jest": "^29.1.2",
     "tsup": "^8.0.2",
     "typescript": "^5.3.3"
