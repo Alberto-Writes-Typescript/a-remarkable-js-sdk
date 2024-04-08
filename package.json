@@ -1,6 +1,6 @@
 {
   "name": "a-remarkable-js-sdk",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "description": "a reMarkable Cloud API wrapper written in TypeScript",
   "keywords": [
     "reMarkable",
