@@ -7,12 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.1] - 2024-04-08
-
-### Fixed
-- Minor bug fixes.
-
-## [0.1.0] - 2024-05-05
+## [0.1.0] - 2024-04-08
 
 ### Added
 - Device connection with reMarkable Cloud.
@@ -20,7 +15,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PDF & ePub file upload to reMarkable Cloud.
 - File Tree navigator.
 
-[unreleased]: https://github.com/Alberto-Writes-Typescript/a-remarkable-js-sdk/compare/v0.1.1...HEAD
-[0.1.1]: https://github.com/Alberto-Writes-Typescript/a-remarkable-js-sdk/compare/v0.2.1...v0.1.1
-[0.2.1]: https://github.com/Alberto-Writes-Typescript/a-remarkable-js-sdk/compare/v0.1.0...v0.2.1
+[unreleased]: https://github.com/Alberto-Writes-Typescript/a-remarkable-js-sdk/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/Alberto-Writes-Typescript/a-remarkable-js-sdk/releases/tag/v0.1.0
