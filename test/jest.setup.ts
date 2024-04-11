@@ -1,6 +1,14 @@
 import * as dotenv from 'dotenv'
 
 /**
+ * Jest Fetch Mock
+ *
+ * Polyfill for `fetch` in Node.js test environment. Used to mock
+ * `fetch` requests for an easier testing experience.
+ */
+import { enableFetchMocks } from 'jest-fetch-mock'
+
+/**
  * Due to Polly.js deprecations, we use NodeHTTPAdapter instead of FetchAdapter.
  * When @pollyjs/adapter-fetch is running in a Node.js environment, it uses a polyfill
  * for fetch, which is not as reliable or feature-complete as the native fetch API in
@@ -34,3 +42,12 @@ Polly.register(NodeHttpAdapter)
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error es
 Polly.register(FSPersister)
+
+/**
+ * Fetch Mock Configuration
+ * ------------------------
+ */
+// `fetch` mock available globally
+enableFetchMocks()
+// `fetch` mock disabled by default
+fetchMock.dontMock()
