@@ -1,7 +1,6 @@
 import { execSync } from 'child_process'
 import * as fs from 'fs'
 import open from 'open'
-// @ts-expect-error - Expected error
 import path from 'path'
 import { inc } from 'semver'
 import { spinner, intro, outro, confirm, cancel, select } from '@clack/prompts'
