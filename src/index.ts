@@ -13,6 +13,7 @@ import HttpClient from './net/HttpClient'
 import FetchClient from './net/FetchClient'
 import NodeClient from './net/NodeClient'
 import ServiceManager from './serviceDiscovery/ServiceManager'
+import RemarkableClient from './RemarkableClient'
 
 export {
   Device, type DeviceDescription, Session,
@@ -25,5 +26,6 @@ export {
   Folder,
   HashUrl,
   HttpClient, NodeClient, FetchClient,
-  ServiceManager
+  ServiceManager,
+  RemarkableClient
 }
