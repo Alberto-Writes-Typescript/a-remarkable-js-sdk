@@ -9,6 +9,7 @@ export const tsup: Options = {
   format: ['cjs', 'esm'],       // Generate CJS and ESM bundles
   minify: true,
   bundle: true,
+  sourcemap: true,
   skipNodeModulesBundle: true,  // Avoid bundling npm dependencies in resulting bundle
   watch: env === 'development', // (only in development) Enable file watch
   target: 'es2020',
