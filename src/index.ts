@@ -10,6 +10,7 @@ import {
   HashUrl
 } from './internal'
 import HttpClient from './net/HttpClient'
+import FetchClient from './net/FetchClient'
 import NodeClient from './net/NodeClient'
 import ServiceManager from './serviceDiscovery/ServiceManager'
 
@@ -23,6 +24,6 @@ export {
   FileSystem,
   Folder,
   HashUrl,
-  HttpClient, NodeClient,
+  HttpClient, NodeClient, FetchClient,
   ServiceManager
 }

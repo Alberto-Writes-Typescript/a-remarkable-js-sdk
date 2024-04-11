@@ -2,6 +2,8 @@ import { Device, Session } from './authentication'
 import { type Folder, type Document } from './internal'
 import FileBuffer, { type DocumentReference } from './internal/FileBuffer'
 import FileSystem from './internal/FileSystem'
+import FetchClient from './net/FetchClient'
+import NodeClient from './net/NodeClient'
 import ServiceManager from './serviceDiscovery/ServiceManager'
 
 /**
@@ -12,15 +14,23 @@ import ServiceManager from './serviceDiscovery/ServiceManager'
  * - Upload documents
  */
 export default class RemarkableClient {
+  static async withFetchHttpClient (deviceToken: string, sessionToken?: string): Promise<RemarkableClient> {
+    return new RemarkableClient(deviceToken, sessionToken, FetchClient)
+  }
+
+  static async withNodeHttpClient (deviceToken: string, sessionToken?: string): Promise<RemarkableClient> {
+    return new RemarkableClient(deviceToken, sessionToken, NodeClient)
+  }
+
   device: Device
   session: Session
   serviceManager: ServiceManager
 
-  constructor (deviceToken: string, sessionToken?: string) {
+  constructor (deviceToken: string, sessionToken?: string, httpClientConstructor: unknown = NodeClient) {
     this.device = new Device(deviceToken)
     if (sessionToken != null) {
       this.session = new Session(sessionToken)
-      this.serviceManager = new ServiceManager(this.session)
+      this.serviceManager = new ServiceManager(this.session, httpClientConstructor)
     }
   }
 
