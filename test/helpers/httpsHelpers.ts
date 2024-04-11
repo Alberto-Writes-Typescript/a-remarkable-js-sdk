@@ -8,14 +8,15 @@ export function mockHttpsRequest (
   body: Record<string, string> | null = null
 ): jest.Mock {
   const hostname = (new URL(path, host)).hostname
-  const options = { hostname, path, method, headers }
+  const options = { hostname, path, method, headers, body }
 
   const mockHttpsRequest = jest
     .spyOn(https, 'request')
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     .mockImplementation((opts, callback) => {
-      expect(opts).toEqual(options)
+      // @ts-expect-error - Expected error
+      expect({ ...opts, body }).toEqual(options)
 
       const mockResponse = {
         statusCode: 200,

@@ -19,7 +19,7 @@ describe('NodeClient', () => {
       const method: string = 'GET'
       const headers = { Authorization: 'Bearer token' }
 
-      const mock: jest.Mock = mockHttpsRequest(host, path, method, headers)
+      const mock: jest.Mock = mockHttpsRequest(host, path, method, headers, null)
 
       await NodeClient.get(host, path, headers)
 
@@ -43,11 +43,12 @@ describe('NodeClient', () => {
       const path: string = '/posts'
       const method: string = 'POST'
       const headers = { Authorization: 'Bearer token' }
-      // const body: Object = { title: 'foo', body: 'bar', userId: 1 }
+      const body = { title: 'foo', body: 'bar', userId: 1 }
 
-      const mock: jest.Mock = mockHttpsRequest(host, path, method, headers)
+      // @ts-expect-error - Expected error
+      const mock: jest.Mock = mockHttpsRequest(host, path, method, headers, body)
 
-      await NodeClient.post(host, path, headers)
+      await NodeClient.post(host, path, headers, body)
 
       assertRequestPayload(mock)
 
@@ -69,9 +70,9 @@ describe('NodeClient', () => {
       const path: string = '/posts/1'
       const method: string = 'PATCH'
       const headers = { Authorization: 'Bearer token' }
-      // const body = { title: 'foo' }
+      const body = { title: 'foo' }
 
-      const mock: jest.Mock = mockHttpsRequest(host, path, method, headers)
+      const mock: jest.Mock = mockHttpsRequest(host, path, method, headers, body)
 
       await NodeClient.patch(host, path, headers)
 
@@ -95,8 +96,10 @@ describe('NodeClient', () => {
       const path: string = '/posts/1'
       const method: string = 'PUT'
       const headers = { Authorization: 'Bearer token' }
+      const body = { id: 1, title: 'foo', body: 'bar', userId: 1 }
 
-      const mock: jest.Mock = mockHttpsRequest(host, path, method, headers)
+      // @ts-expect-error - Expected error
+      const mock: jest.Mock = mockHttpsRequest(host, path, method, headers, body)
 
       await NodeClient.put(host, path, headers)
 
@@ -119,7 +122,7 @@ describe('NodeClient', () => {
       const method: string = 'DELETE'
       const headers = { Authorization: 'Bearer token' }
 
-      const mock: jest.Mock = mockHttpsRequest(host, path, method, headers)
+      const mock: jest.Mock = mockHttpsRequest(host, path, method, headers, null)
 
       await NodeClient.delete(host, path, headers)
 
