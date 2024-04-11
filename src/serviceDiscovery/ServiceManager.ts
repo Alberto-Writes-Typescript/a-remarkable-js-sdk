@@ -54,12 +54,13 @@ export default class ServiceManager {
   public readonly session: Session
   public readonly httpClient: HttpClient
 
-  constructor (session: Session) {
+  constructor (session: Session, HttpClientConstructor: unknown = NodeClient) {
     this.session = session
-    this.httpClient = new NodeClient(
-      SERVICE_DISCOVERY_HOST,
-      { Authorization: `Bearer ${this.session.token}` }
-    )
+
+    // @ts-expect-error - httpClientConstructor is a constructor
+    this.httpClient = new HttpClientConstructor(SERVICE_DISCOVERY_HOST, {
+      Authorization: `Bearer ${this.session.token}`
+    })
   }
 
   /**
