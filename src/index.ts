@@ -1,6 +1,7 @@
 import { Device, type DeviceDescription, Session } from './authentication'
 import {
   Document,
+  DocumentReference,
   FileNotUploadedError,
   FileBuffer,
   UnsupportedFileExtensionError,
@@ -18,6 +19,7 @@ import RemarkableClient from './RemarkableClient'
 export {
   Device, type DeviceDescription, Session,
   Document,
+  DocumentReference,
   FileNotUploadedError,
   FileBuffer,
   UnsupportedFileExtensionError,
