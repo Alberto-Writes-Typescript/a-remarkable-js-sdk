@@ -22,27 +22,35 @@ export default class RemarkableClient {
     return new RemarkableClient(deviceToken, sessionToken, NodeClient)
   }
 
-  device: Device
-  session: Session
-  serviceManager: ServiceManager
+  readonly #device: Device
+  #serviceManager: ServiceManager
+  #session: Session
 
   constructor (deviceToken: string, sessionToken?: string, httpClientConstructor: unknown = NodeClient) {
-    this.device = new Device(deviceToken)
+    this.#device = new Device(deviceToken)
     if (sessionToken != null) {
-      this.session = new Session(sessionToken)
-      this.serviceManager = new ServiceManager(this.session, httpClientConstructor)
+      this.#session = new Session(sessionToken)
+      this.#serviceManager = new ServiceManager(this.session, httpClientConstructor)
     }
+  }
+
+  get device (): Device {
+    return this.#device
+  }
+
+  get session (): Session {
+    return this.#session
   }
 
   async connect (): Promise<void> {
     if (this.sessionExpired) {
-      this.session = await this.device.connect()
-      this.serviceManager = new ServiceManager(this.session)
+      this.#session = await this.device.connect()
+      this.#serviceManager = new ServiceManager(this.session)
     }
   }
 
   async fileSystem (): Promise<FileSystem> {
-    return await FileSystem.initialize(this.serviceManager)
+    return await FileSystem.initialize(this.#serviceManager)
   }
 
   async document (id: string): Promise<Document | undefined> {
@@ -56,11 +64,11 @@ export default class RemarkableClient {
   }
 
   async upload (name: string, buffer: ArrayBuffer): Promise<DocumentReference> {
-    const fileBuffer = new FileBuffer(name, buffer, this.serviceManager)
+    const fileBuffer = new FileBuffer(name, buffer, this.#serviceManager)
     return await fileBuffer.upload()
   }
 
-  private get sessionExpired (): boolean {
+  get sessionExpired (): boolean {
     return this.session == null || this.session.expired
   }
 }
