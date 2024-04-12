@@ -15,7 +15,8 @@ describe('RemarkableClient', () => {
 
   describe('.connect', () => {
     it('if client has no session, creates session', async () => {
-      const client = new RemarkableClient(global.unitTestParams.deviceToken as string)
+      const client = new RemarkableClient(
+        global.unitTestParams.deviceToken as string)
 
       expect(client.session).not.toBeDefined()
 
@@ -25,40 +26,38 @@ describe('RemarkableClient', () => {
     })
 
     it('if client has expired session, creates session', async () => {
-      const client = new RemarkableClient(global.unitTestParams.deviceToken as string)
+      const client = new RemarkableClient(
+        global.unitTestParams.deviceToken as string,
+        global.unitTestParams.sessionToken as string
+      )
 
       const spy = disableSessionExpiration(true)
 
+      const expiredSession = client.session
+
       try {
-        expect(client.session).not.toBeDefined()
-
-        const session = new Session(global.unitTestParams.sessionToken as string)
-
-        client.session = session
-
         await client.connect()
 
-        expect(client.session).not.toBe(session)
+        expect(client.session).not.toBe(expiredSession)
       } finally {
         enableSessionExpiration(spy)
       }
     })
 
     it('if client has valid session, does not create session', async () => {
-      const client = new RemarkableClient(global.unitTestParams.deviceToken as string)
+      const client = new RemarkableClient(
+        global.unitTestParams.deviceToken as string,
+        global.unitTestParams.sessionToken as string
+      )
 
       const spy = disableSessionExpiration(false)
 
+      const currentSession = client.session
+
       try {
-        expect(client.session).not.toBeDefined()
-
-        const session = new Session(global.unitTestParams.sessionToken as string)
-
-        client.session = session
-
         await client.connect()
 
-        expect(client.session).toBe(session)
+        expect(client.session).toBe(currentSession)
       } finally {
         enableSessionExpiration(spy)
       }
@@ -150,6 +149,49 @@ describe('RemarkableClient', () => {
       const folder = await client.folder('invalid folder ID')
 
       expect(folder).not.toBeDefined()
+    })
+  })
+
+  describe('.sessionExpired', () => {
+    let client: RemarkableClient = null
+
+    let spy: jest.SpyInstance
+
+    beforeEach(() => {
+      client = new RemarkableClient(
+        global.unitTestParams.deviceToken as string,
+        global.unitTestParams.sessionToken as string
+      )
+
+      spy = disableSessionExpiration(false)
+    })
+
+    it('if client has no session, returns true', () => {
+      spy = jest.spyOn(client, 'session', 'get').mockReturnValue(undefined)
+
+      expect(client.sessionExpired).toBe(true)
+
+      spy.mockRestore()
+    })
+
+    it('if client has expired session, returns true', () => {
+      spy = disableSessionExpiration(true)
+
+      try {
+        expect(client.sessionExpired).toBe(true)
+      } finally {
+        spy.mockRestore()
+      }
+    })
+
+    it('if client has non-expired session, returns false', () => {
+      spy = disableSessionExpiration(false)
+
+      try {
+        expect(client.sessionExpired).toBe(false)
+      } finally {
+        spy.mockRestore()
+      }
     })
   })
 })
