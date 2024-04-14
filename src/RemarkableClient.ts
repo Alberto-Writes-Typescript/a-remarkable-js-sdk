@@ -63,7 +63,7 @@ export default class RemarkableClient {
     return fileSystem.folder(id)
   }
 
-  async upload (name: string, buffer: ArrayBuffer): Promise<DocumentReference> {
+  async upload (name: string, buffer: Buffer): Promise<DocumentReference> {
     const fileBuffer = new FileBuffer(name, buffer, this.#serviceManager)
     return await fileBuffer.upload()
   }
