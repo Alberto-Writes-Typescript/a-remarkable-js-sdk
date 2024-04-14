@@ -11,7 +11,7 @@ describe('FileBufferType', () => {
   })
 
   it('if unsupported file extension buffer is provided, throws exception', async () => {
-    const unsupportedBuffer = new ArrayBuffer(4)
+    const unsupportedBuffer = Buffer.alloc(4)
 
     expect(() => new FileBufferType(unsupportedBuffer)).toThrow(UnsupportedFileExtensionError)
   })
@@ -32,7 +32,7 @@ describe('FileBufferType', () => {
     })
 
     it('if unsuported file extension buffer is given, throws exception', async () => {
-      const unsupportedBuffer = new ArrayBuffer(4)
+      const unsupportedBuffer = Buffer.alloc(4)
 
       expect(() => FileBufferType.extension(unsupportedBuffer)).toThrow(UnsupportedFileExtensionError)
     })
@@ -54,7 +54,7 @@ describe('FileBufferType', () => {
     })
 
     it('if unsuported file extension buffer is given, throws exception', async () => {
-      const unsupportedBuffer = new ArrayBuffer(4)
+      const unsupportedBuffer = Buffer.alloc(4)
 
       expect(() => FileBufferType.extension(unsupportedBuffer)).toThrow(UnsupportedFileExtensionError)
     })

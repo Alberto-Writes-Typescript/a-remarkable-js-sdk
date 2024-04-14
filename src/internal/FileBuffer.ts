@@ -41,7 +41,7 @@ export class DocumentReference {
  * Represents a file content, encoded as a buffer, ready to be uploaded
  * to reMarkable Cloud.
  *
- * Encapsulates the logic to handle file upload. Given the ArrayBuffer
+ * Encapsulates the logic to handle file upload. Given the Buffer
  * content of a file, it verifies the type compatibility with the
  * reMarkable Cloud API and provides an interface to upload the file
  * and get a reference to its cloud equivalent when successfully
@@ -64,27 +64,27 @@ export default class FileBuffer {
   }
 
   /**
-   * Creates FileBuffer from file ArrayBuffer and uploads it
+   * Creates FileBuffer from file Buffer and uploads it
    *
    * @param name - File name
    * @param buffer - File content
    * @param serviceManager
    */
-  static async upload (name: string, buffer: ArrayBuffer, serviceManager: ServiceManager): Promise<FileBuffer> {
+  static async upload (name: string, buffer: Buffer, serviceManager: ServiceManager): Promise<FileBuffer> {
     const fileBuffer = new FileBuffer(name, buffer, serviceManager)
     await fileBuffer.upload()
     return fileBuffer
   }
 
   public readonly name: string
-  public readonly buffer: ArrayBuffer
+  public readonly buffer: Buffer
   public readonly type: FileBufferType
   public documentReference?: DocumentReference
 
   private httpClient?: HttpClient
   private readonly serviceManager: ServiceManager
 
-  constructor (name: string, buffer: ArrayBuffer, serviceManager: ServiceManager) {
+  constructor (name: string, buffer: Buffer, serviceManager: ServiceManager) {
     this.name = name
     this.buffer = buffer
     this.serviceManager = serviceManager

@@ -1,12 +1,12 @@
 /**
  * The reMarkable API only works with `.pdf` and `.epub` files. This error is
- * raised when an `ArrayBuffer` with an unsupported file extension is passed to
+ * raised when an `Buffer` with an unsupported file extension is passed to
  * the `FileBufferType` class.
  */
 export class UnsupportedFileExtensionError extends Error {}
 
 /**
- * Each `ArrayBuffer` presents a specific signature representing its corresponding
+ * Each `Buffer` presents a specific signature representing its corresponding
  * file type at the beginning. This constants list the signature for each one of
  * the supported file types.
  */
@@ -36,7 +36,7 @@ const MIME_TYPE_MAPS = {
  * file extension is passed.
  */
 export default class FileBufferType {
-  static extension (buffer: ArrayBuffer): 'pdf' | 'epub' {
+  static extension (buffer: Buffer): 'pdf' | 'epub' {
     const signature = (new Uint8Array(buffer)).slice(0, 4)
 
     for (const [type, sig] of Object.entries(BUFFER_TYPE_SIGNATURES)) {
@@ -48,7 +48,7 @@ export default class FileBufferType {
     throw new UnsupportedFileExtensionError('Unsupported file extension. Only .pdf and .epub files are supported.')
   }
 
-  static mimeType (buffer: ArrayBuffer): string {
+  static mimeType (buffer: Buffer): string {
     const type = this.extension(buffer)
     return MIME_TYPE_MAPS[type]
   }
@@ -62,7 +62,7 @@ export default class FileBufferType {
    */
   readonly mimeType: string
 
-  constructor (buffer: ArrayBuffer) {
+  constructor (buffer: Buffer) {
     this.extension = FileBufferType.extension(buffer)
     this.mimeType = FileBufferType.mimeType(buffer)
   }
