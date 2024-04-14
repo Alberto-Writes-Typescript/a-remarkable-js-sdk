@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `RemarkableClient` method to verify current session has not expired.
+
 ## [0.2.2] - 2024-04-11
 
 ### Fixed
