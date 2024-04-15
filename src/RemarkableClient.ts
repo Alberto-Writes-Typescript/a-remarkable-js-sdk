@@ -1,4 +1,4 @@
-import { Device, Session } from './authentication'
+import { Device, type DeviceDescription, Session } from './authentication'
 import { type Folder, type Document } from './internal'
 import FileBuffer, { type DocumentReference } from './internal/FileBuffer'
 import FileSystem from './internal/FileSystem'
@@ -22,18 +22,24 @@ export default class RemarkableClient {
     return new RemarkableClient(deviceToken, sessionToken, NodeClient)
   }
 
-  readonly #device: Device
-  readonly #fileSystem: FileSystem
+  readonly #HttpClientConstructor: unknown
 
+  #device: Device
+  #fileSystem: FileSystem
   #serviceManager: ServiceManager
   #session: Session
 
-  constructor (deviceToken: string, sessionToken?: string, httpClientConstructor: unknown = NodeClient) {
-    this.#device = new Device(deviceToken)
-    if (sessionToken != null) {
-      this.#session = new Session(sessionToken)
-      this.#serviceManager = new ServiceManager(this.session, httpClientConstructor)
-      this.#fileSystem = new FileSystem(this.#serviceManager)
+  constructor (deviceToken?: string, sessionToken?: string, httpClientConstructor: unknown = NodeClient) {
+    if (deviceToken != null) {
+      this.#device = new Device(deviceToken)
+
+      if (sessionToken != null) {
+        this.#session = new Session(sessionToken)
+        this.#serviceManager = new ServiceManager(this.session, httpClientConstructor)
+        this.#fileSystem = new FileSystem(this.#serviceManager)
+      }
+    } else {
+      this.#HttpClientConstructor = httpClientConstructor
     }
   }
 
@@ -45,10 +51,24 @@ export default class RemarkableClient {
     return this.#session
   }
 
+  async pair (id: string, description: DeviceDescription, oneTimeCode: string): Promise<boolean> {
+    if (!this.paired) {
+      this.#device = await Device.pair(
+        id,
+        description,
+        oneTimeCode,
+        this.#HttpClientConstructor
+      )
+    }
+
+    return this.paired
+  }
+
   async connect (): Promise<void> {
     if (this.sessionExpired) {
       this.#session = await this.device.connect()
       this.#serviceManager = new ServiceManager(this.session)
+      this.#fileSystem = new FileSystem(this.#serviceManager)
     }
   }
 
@@ -67,5 +87,9 @@ export default class RemarkableClient {
 
   get sessionExpired (): boolean {
     return this.session == null || this.session.expired
+  }
+
+  get paired (): boolean {
+    return this.session != null
   }
 }

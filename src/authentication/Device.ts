@@ -3,6 +3,7 @@ import { type DeviceDescription } from './DeviceDescription'
 import ServiceManager from '../serviceDiscovery/ServiceManager'
 import RemarkableTokenPayload from './RemarkableTokenPayload'
 import Session from './Session'
+import NodeClient from '../net/NodeClient'
 
 /**
  * Represents a reMarkable device. Provides an interface to
@@ -29,8 +30,13 @@ export default class Device {
    * @param description - Label which indicates the `device` running environment (web browser, mobile app, ...)
    * @param oneTimeCode - One-time password to authenticate reMarkable Cloud user account when pairing `device`
    */
-  public static async pair (id: string, description: DeviceDescription, oneTimeCode: string): Promise<Device> {
-    const httpClient = ServiceManager.productionHttpClient()
+  public static async pair (
+    id: string,
+    description: DeviceDescription,
+    oneTimeCode: string,
+    HttpClientConstructor: unknown = NodeClient
+  ): Promise<Device> {
+    const httpClient = ServiceManager.productionHttpClient({}, HttpClientConstructor)
 
     const pairResponse = await httpClient.post(
       '/token/json/2/device/new',
