@@ -47,8 +47,12 @@ export default class ServiceManager {
    * of this endpoint without requiring a `Device` instance (as it
    * is required for other endpoints).
    */
-  static productionHttpClient (headers: HeadersPayload = {}): HttpClient {
-    return new NodeClient('https://webapp-prod.cloud.remarkable.engineering', headers)
+  static productionHttpClient (
+    headers: HeadersPayload = {},
+    HttpClientConstructor: unknown = NodeClient
+  ): HttpClient {
+    // @ts-expect-error - httpClientConstructor is a constructor
+    return new HttpClientConstructor('https://webapp-prod.cloud.remarkable.engineering', headers)
   }
 
   public readonly session: Session
