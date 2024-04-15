@@ -69,14 +69,17 @@ export default class Device {
 
   private readonly httpClient: HttpClient
 
-  constructor (deviceToken: string) {
+  constructor (deviceToken: string, HttpClientConstructor: unknown = NodeClient) {
     const deviceTokenPayload = new RemarkableTokenPayload(deviceToken)
 
     this.id = deviceTokenPayload.deviceId
     this.description = deviceTokenPayload.deviceDescription
     this.token = deviceToken
 
-    this.httpClient = ServiceManager.productionHttpClient({ Authorization: `Bearer ${this.token}` })
+    this.httpClient = ServiceManager.productionHttpClient(
+      { Authorization: `Bearer ${this.token}` },
+      HttpClientConstructor
+    )
   }
 
   /**
