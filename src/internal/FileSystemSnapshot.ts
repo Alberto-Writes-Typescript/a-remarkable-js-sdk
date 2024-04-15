@@ -30,6 +30,18 @@ export default class FileSystemSnapshot {
     this.#folders = folders
   }
 
+  get documents (): Document[] {
+    return this.#documents
+  }
+
+  get folders (): Folder[] {
+    return this.#folders
+  }
+
+  get rootFolder (): Folder {
+    return this.#folders.find((folder) => folder.parentFolder == null)
+  }
+
   document (id: string): Document | undefined {
     return this.#documents.find((document) => document.id === id)
   }
