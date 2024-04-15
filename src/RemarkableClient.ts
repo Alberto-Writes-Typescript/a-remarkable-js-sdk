@@ -23,6 +23,8 @@ export default class RemarkableClient {
   }
 
   readonly #device: Device
+  readonly #fileSystem: FileSystem
+
   #serviceManager: ServiceManager
   #session: Session
 
@@ -31,6 +33,7 @@ export default class RemarkableClient {
     if (sessionToken != null) {
       this.#session = new Session(sessionToken)
       this.#serviceManager = new ServiceManager(this.session, httpClientConstructor)
+      this.#fileSystem = new FileSystem(this.#serviceManager)
     }
   }
 
@@ -49,18 +52,12 @@ export default class RemarkableClient {
     }
   }
 
-  async fileSystem (): Promise<FileSystem> {
-    return await FileSystem.initialize(this.#serviceManager)
-  }
-
   async document (id: string): Promise<Document | undefined> {
-    const fileSystem = await this.fileSystem()
-    return fileSystem.document(id)
+    return await this.#fileSystem.document(id)
   }
 
   async folder (id: string): Promise<Folder | undefined> {
-    const fileSystem = await this.fileSystem()
-    return fileSystem.folder(id)
+    return await this.#fileSystem.folder(id)
   }
 
   async upload (name: string, buffer: Buffer): Promise<DocumentReference> {

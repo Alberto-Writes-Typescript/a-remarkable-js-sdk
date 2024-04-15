@@ -141,44 +141,30 @@ describe('FileSystem', () => {
     serviceManager = new ServiceManager(session)
   })
 
-  describe('static initialize', () => {
-    it('returns FileSystem object containing the entire reMarkable account file tree', async () => {
-      const fileSystem = await FileSystem.initialize(serviceManager)
-
-      expect(fileSystem.documents.length).toBe(global.unitTestParams.fileSystemDocumentsCount)
-    })
-  })
-
   describe('document', () => {
     let fileSystem: FileSystem = null
 
-    beforeAll(() => {
-      const fileSystemParser = new FileSystemParser(sampleFileSystemPayload)
-      fileSystem = new FileSystem(fileSystemParser.documents, fileSystemParser.folders)
-    })
+    beforeAll(() => { fileSystem = new FileSystem(serviceManager) })
 
     it('if there is a document with given ID, returns document', async () => {
-      const document = fileSystem.document('file-without-parent')
+      const document = await fileSystem.document(process.env.SAMPLE_DOCUMENT_ID)
 
       expect(document).not.toBeNull()
-      expect(document.id).toBe('file-without-parent')
+      expect(document.id).toBe(process.env.SAMPLE_DOCUMENT_ID)
     })
 
     it('if there is no document with given ID, returns null', async () => {
-      expect(fileSystem.document('non-existent-document')).not.toBeDefined()
+      expect(await fileSystem.document('non-existent-document')).not.toBeDefined()
     })
   })
 
   describe('folder', () => {
     let fileSystem: FileSystem = null
 
-    beforeAll(() => {
-      const fileSystemParser = new FileSystemParser(sampleFileSystemPayload)
-      fileSystem = new FileSystem(fileSystemParser.documents, fileSystemParser.folders)
-    })
+    beforeAll(() => { fileSystem = new FileSystem(serviceManager) })
 
     it('if there is a folder with given ID, returns folder', async () => {
-      const folder = fileSystem.folder('folder-1')
+      const folder = await fileSystem.folder(process.env.SAMPLE_FOLDER_ID)
 
       expect(folder).not.toBeNull()
       expect(folder.id).toBe('folder-1')

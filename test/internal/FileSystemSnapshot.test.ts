@@ -1,4 +1,5 @@
-import FileSystemSnapshot, { type DocumentPayload, FileSystemParser, type FolderPayload } from '../../src/internal/FileSystem'
+import { type DocumentPayload, FileSystemParser, type FolderPayload } from '../../src/internal/FileSystem'
+import { FileSystemSnapshot } from '../../src/internal/index'
 
 /**
  * - file-without-parent
