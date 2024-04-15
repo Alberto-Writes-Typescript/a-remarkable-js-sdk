@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `RemarkableClient` method to pair new `Device`.
+- `Device` `HttpClient` can be configured (before it was using `NodeClient` only).
+
 ## [0.3.0] - 2024-04-15
 
 ### Added
