@@ -14,11 +14,11 @@ import ServiceManager from './serviceDiscovery/ServiceManager'
  * - Upload documents
  */
 export default class RemarkableClient {
-  static withFetchHttpClient (deviceToken: string, sessionToken?: string): RemarkableClient {
+  static withFetchHttpClient (deviceToken?: string, sessionToken?: string): RemarkableClient {
     return new RemarkableClient(deviceToken, sessionToken, FetchClient)
   }
 
-  static withNodeHttpClient (deviceToken: string, sessionToken?: string): RemarkableClient {
+  static withNodeHttpClient (deviceToken?: string, sessionToken?: string): RemarkableClient {
     return new RemarkableClient(deviceToken, sessionToken, NodeClient)
   }
 
