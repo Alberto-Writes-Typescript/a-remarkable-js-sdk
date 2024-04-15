@@ -29,6 +29,7 @@ export default class Device {
    * @param id - Unique `device` ID (uuid v4)
    * @param description - Label which indicates the `device` running environment (web browser, mobile app, ...)
    * @param oneTimeCode - One-time password to authenticate reMarkable Cloud user account when pairing `device`
+   * @param HttpClientConstructor - HttpClient used for generating pair token
    */
   public static async pair (
     id: string,
