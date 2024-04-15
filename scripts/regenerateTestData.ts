@@ -164,10 +164,11 @@ void (async () => {
   const serviceManager = new ServiceManager(session as Session)
 
   s.start('Fetching File Tree')
-  const fileSystem = await FileSystem.initialize(serviceManager)
+  const fileSystem = new FileSystem(serviceManager)
+  const snapshot = await fileSystem.snapshot()
   s.stop('File Tree received!')
 
-  environmentManager.setParameter('fileSystemDocumentsCount', fileSystem.documents.length)
+  environmentManager.setParameter('fileSystemDocumentsCount', snapshot.documents.length)
 
   s.start('Fetching Root folder Hash')
   const rootHashUrl = await HashUrl.fromHash('root', serviceManager)
@@ -177,11 +178,11 @@ void (async () => {
   environmentManager.setParameter('rootFolderHash', rootHash)
 
   s.start('Fetching sample document')
-  const sampleDocument = fileSystem.documents[0]
+  const sampleDocument = snapshot.documents[0]
   s.stop('Sample document received!')
 
   s.start('Fetching sample folder')
-  const sampleFolder = fileSystem.folders[0]
+  const sampleFolder = snapshot.folders[0]
   s.stop('Sample folder received!')
 
   environmentManager.setParameter('sampleDocumentId', sampleDocument.id)

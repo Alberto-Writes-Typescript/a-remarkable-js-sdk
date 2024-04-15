@@ -64,32 +64,6 @@ describe('RemarkableClient', () => {
     })
   })
 
-  describe('.fileSystem', () => {
-    let client: RemarkableClient = null
-
-    let spy: jest.SpyInstance
-
-    beforeEach(() => {
-      client = new RemarkableClient(
-        global.unitTestParams.deviceToken as string,
-        global.unitTestParams.sessionToken as string
-      )
-
-      spy = disableSessionExpiration(false)
-    })
-
-    afterEach(() => {
-      enableSessionExpiration(spy)
-    })
-
-    it('returns file system instance', async () => {
-      const fileSystem = await client.fileSystem()
-
-      expect(fileSystem.documents.length).toBeGreaterThan(0)
-      expect(fileSystem.folders.length).toBeGreaterThan(0)
-    })
-  })
-
   describe('.document', () => {
     let client: RemarkableClient = null
 

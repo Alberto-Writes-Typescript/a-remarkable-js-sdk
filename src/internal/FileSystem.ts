@@ -2,6 +2,7 @@ import Document from './Document'
 import Folder from './Folder'
 import type HttpClient from '../net/HttpClient'
 import type ServiceManager from '../serviceDiscovery/ServiceManager'
+import FileSystemSnapshot from './FileSystemSnapshot'
 
 /**
  * reMarkable Cloud API {@link Document} payload
@@ -44,26 +45,16 @@ export interface FolderPayload {
  * folder its parent {@link Folder}.
  */
 export class FileSystemParser {
-  documentPayloads: DocumentPayload[]
-  folderPayloads: FolderPayload[]
-  documents: Document[]
-  folders: Folder[]
+  readonly #documentPayloads: DocumentPayload[]
+  readonly #folderPayloads: FolderPayload[]
+  readonly #documents: Document[]
+  readonly #folders: Folder[]
 
   constructor (rawFileSystemPayload: Array<DocumentPayload | FolderPayload>) {
-    this.documentPayloads = rawFileSystemPayload.filter((payload) => payload.type === 'DocumentType') as DocumentPayload[]
-    this.folderPayloads = rawFileSystemPayload.filter((payload) => payload.type === 'CollectionType') as FolderPayload[]
+    this.#documentPayloads = rawFileSystemPayload.filter((payload) => payload.type === 'DocumentType') as DocumentPayload[]
+    this.#folderPayloads = rawFileSystemPayload.filter((payload) => payload.type === 'CollectionType') as FolderPayload[]
 
-    this.parse()
-  }
-
-  private parse (): void {
-    this.parseFolders()
-    this.parseDocuments()
-    this.buildFileTreeHierarchy()
-  }
-
-  private parseFolders (): void {
-    this.folders = this.folderPayloads.map((folderPayload) => {
+    this.#folders = this.#folderPayloads.map((folderPayload) => {
       return new Folder(
         folderPayload.id,
         folderPayload.hash,
@@ -74,10 +65,8 @@ export class FileSystemParser {
         []
       )
     })
-  }
 
-  private parseDocuments (): void {
-    this.documents = this.documentPayloads.map((documentPayload) => {
+    this.#documents = this.#documentPayloads.map((documentPayload) => {
       return new Document(
         documentPayload.id,
         documentPayload.hash,
@@ -88,17 +77,27 @@ export class FileSystemParser {
         null
       )
     })
+
+    this.buildFileTreeHierarchy()
+  }
+
+  get documents (): Document[] {
+    return this.#documents
+  }
+
+  get folders (): Folder[] {
+    return this.#folders
   }
 
   private buildFileTreeHierarchy (): void {
-    this.folderPayloads.forEach((folderPayload) => {
+    this.#folderPayloads.forEach((folderPayload) => {
       const folder = this.folders.find((f) => f.id === folderPayload.id)
 
       if (folderPayload.parent != null && folder.parentFolder == null) {
         folder.parentFolder = this.folders.find((f) => f.id === folderPayload.parent)
       }
 
-      const folderDocumentPayloads = this.documentPayloads.filter((documentPayload) => documentPayload.parent === folder.id)
+      const folderDocumentPayloads = this.#documentPayloads.filter((documentPayload) => documentPayload.parent === folder.id)
       const folderDocuments = folderDocumentPayloads.map((documentPayload) => this.documents.find((d) => d.id === documentPayload.id))
 
       folderDocuments.forEach((document) => {
@@ -106,7 +105,7 @@ export class FileSystemParser {
         folder.documents.push(document)
       })
 
-      const folderFolderPayloads = this.folderPayloads.filter((folderPayload) => folderPayload.parent === folder.id)
+      const folderFolderPayloads = this.#folderPayloads.filter((folderPayload) => folderPayload.parent === folder.id)
       const folderFolders = folderFolderPayloads.map((folderPayload) => this.folders.find((f) => f.id === folderPayload.id))
 
       folderFolders.forEach((subFolder) => {
@@ -132,8 +131,68 @@ export class FileSystemParser {
  * other file system.
  */
 export default class FileSystem {
-  static async initialize (serviceManager: ServiceManager): Promise<FileSystem> {
-    const httpClient: HttpClient = await serviceManager.internalCloudHttpClient()
+  readonly #serviceManager: ServiceManager
+
+  #lastFetchSnapshot?: FileSystemSnapshot = null
+
+  constructor (serviceManager: ServiceManager) {
+    this.#serviceManager = serviceManager
+  }
+
+  get lastFetchSnapshot (): FileSystemSnapshot | undefined {
+    return this.#lastFetchSnapshot
+  }
+
+  /**
+   * Requests new reMarkable Cloud snapshot of all documents and folders in user account.
+   */
+  async snapshot (): Promise<FileSystemSnapshot> {
+    this.#lastFetchSnapshot = await this.fetchSnapshot()
+    return this.#lastFetchSnapshot
+  }
+
+  /**
+   * Requests new reMarkable Cloud list of all documents in user account.
+   *
+   * Consider using {@link snapshot} method to get a snapshot of the entire file system
+   * and fetch the documents from there instead of calling this method. Each document
+   * request triggers a fetch call of the whole file system and the post-processing
+   * of the response to build the file system tree. This is an expensive operation
+   * that should be only invoked when changes have been made to the file system
+   * (files uploaded, updated, deleted, etc).
+   *
+   * If no changes were uploaded to the reMarkable Cloud you should use the {@link snapshot}
+   * method to get the list of documents and folders in the user account. The snapshot works
+   * as a cache, and contains the file system information of the last request made to the
+   * reMarkable Cloud API.
+   */
+  async document (id: string): Promise<Document | undefined> {
+    const snapshot = await this.snapshot()
+    return snapshot.documents.find((document) => document.id === id)
+  }
+
+  /**
+   * Requests new reMarkable Cloud list of all folder in user account.
+   *
+   * Consider using {@link snapshot} method to get a snapshot of the entire file system
+   * and fetch the folder from there instead of calling this method. Each folder
+   * request triggers a fetch call of the whole file system and the post-processing
+   * of the response to build the file system tree. This is an expensive operation
+   * that should be only invoked when changes have been made to the file system
+   * (files uploaded, updated, deleted, etc).
+   *
+   * If no changes were uploaded to the reMarkable Cloud you should use the {@link snapshot}
+   * method to get the list of documents and folders in the user account. The snapshot works
+   * as a cache, and contains the file system information of the last request made to the
+   * reMarkable Cloud API.
+   */
+  async folder (id: string): Promise<Folder | undefined> {
+    const snapshot = await this.snapshot()
+    return snapshot.folders.find((folder) => folder.id === id)
+  }
+
+  private async fetchSnapshot (): Promise<FileSystemSnapshot> {
+    const httpClient: HttpClient = await this.#serviceManager.internalCloudHttpClient()
 
     const response = await httpClient.get(
       '/doc/v2/files',
@@ -147,28 +206,6 @@ export default class FileSystem {
     const fileSystemPayload = JSON.parse(await response.text()) as Array<DocumentPayload | FolderPayload>
     const fileSystemParser = new FileSystemParser(fileSystemPayload)
 
-    return new FileSystem(fileSystemParser.documents, fileSystemParser.folders)
-  }
-
-  /**
-   * List of all {@link Document}s in user reMarkable Cloud account
-   */
-  documents: Document[] = []
-  /**
-   * List of all {@link Folder}s in user reMarkable Cloud account
-   */
-  folders: Folder[] = []
-
-  constructor (documents: Document[], folders: Folder[]) {
-    this.documents = documents
-    this.folders = folders
-  }
-
-  document (id: string): Document | undefined {
-    return this.documents.find((document) => document.id === id)
-  }
-
-  folder (id: string): Folder | undefined {
-    return this.folders.find((folder) => folder.id === id)
+    return new FileSystemSnapshot(fileSystemParser.documents, fileSystemParser.folders)
   }
 }
