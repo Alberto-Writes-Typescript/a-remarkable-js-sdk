@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `RemarkableClient` method to verify current session has not expired.
+- Added `FileSystem` cache system via `FileSystemSnapshot`s.
+
+### Changed
+
+- `FileBuffer` interface handles `Buffer` objects instead of `ArrayBuffer`s.
+- `FileSystem` now fetches `Document`s and `Folder`s directly from the reMarkable Cloud.
 
 ## [0.2.2] - 2024-04-11
 
