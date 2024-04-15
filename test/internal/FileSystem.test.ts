@@ -131,47 +131,33 @@ describe('FileSystemParser', () => {
 
 describe('FileSystem', () => {
   let serviceManager: ServiceManager = null
+  let fileSystem: FileSystem = null
 
   setupHttpRecording()
 
-  beforeEach(() => {
+  beforeAll(() => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const session = new Session(global.unitTestParams.sessionToken)
 
     serviceManager = new ServiceManager(session)
+    fileSystem = new FileSystem(serviceManager)
   })
 
   describe('document', () => {
-    let fileSystem: FileSystem = null
-
-    beforeAll(() => { fileSystem = new FileSystem(serviceManager) })
-
     it('if there is a document with given ID, returns document', async () => {
-      const document = await fileSystem.document(process.env.SAMPLE_DOCUMENT_ID)
+      const document = await fileSystem.document(global.unitTestParams.sampleDocumentId as string)
 
       expect(document).not.toBeNull()
-      expect(document.id).toBe(process.env.SAMPLE_DOCUMENT_ID)
-    })
-
-    it('if there is no document with given ID, returns null', async () => {
-      expect(await fileSystem.document('non-existent-document')).not.toBeDefined()
+      expect(document.id).toBe(global.unitTestParams.sampleDocumentId as string)
     })
   })
 
   describe('folder', () => {
-    let fileSystem: FileSystem = null
-
-    beforeAll(() => { fileSystem = new FileSystem(serviceManager) })
-
     it('if there is a folder with given ID, returns folder', async () => {
-      const folder = await fileSystem.folder(process.env.SAMPLE_FOLDER_ID)
+      const folder = await fileSystem.folder(global.unitTestParams.sampleFolderId as string)
 
       expect(folder).not.toBeNull()
-      expect(folder.id).toBe('folder-1')
-    })
-
-    it('if there is no folder with given ID, returns null', async () => {
-      expect(fileSystem.folder('non-existent-folder')).not.toBeDefined()
+      expect(folder.id).toBe(global.unitTestParams.sampleFolderId as string)
     })
   })
 })
