@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `RemarkableClient` `paired` method verifies presence of `Device`. 
+
 ## [0.4.1] - 2024-04-15
 
 ### Changed
