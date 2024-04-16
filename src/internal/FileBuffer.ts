@@ -1,4 +1,4 @@
-import { TextEncoder } from 'fast-text-encoding'
+import { TextEncoder } from 'fastestsmallesttextencoderdecoder'
 import { promises as fs } from 'fs'
 import { fromByteArray } from 'base64-js'
 
