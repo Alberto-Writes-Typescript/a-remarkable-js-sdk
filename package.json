@@ -43,8 +43,8 @@
     "version:bump": "npx tsx --tsconfig ./config/tsconfig.json ./scripts/bumpPackageVersion.ts"
   },
   "dependencies": {
+    "@polkadot/x-textencoder": "^12.6.2",
     "base64-js": "^1.5.1",
-    "fastestsmallesttextencoderdecoder": "^1.0.22",
     "jwt-decode": "^4.0.0",
     "uuid": "^9.0.1"
   },

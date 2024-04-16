@@ -1,4 +1,4 @@
-import { TextEncoder } from 'fastestsmallesttextencoderdecoder'
+import { TextEncoder } from '@polkadot/x-textencoder'
 import { promises as fs } from 'fs'
 import { fromByteArray } from 'base64-js'
 
