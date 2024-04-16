@@ -129,6 +129,6 @@ export default class FileBuffer {
     const encoder = new TextEncoder()
     const namePayload = JSON.stringify({ file_name: this.name })
     const encodedNamePayload = encoder.encode(namePayload)
-    return fromByteArray(encodedNamePayload)
+    return fromByteArray(encodedNamePayload as Uint8Array)
   }
 }
