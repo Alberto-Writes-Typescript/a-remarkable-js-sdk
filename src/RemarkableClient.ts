@@ -90,6 +90,6 @@ export default class RemarkableClient {
   }
 
   get paired (): boolean {
-    return this.session != null
+    return this.device != null
   }
 }
