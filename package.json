@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "base64-js": "^1.5.1",
+    "fast-text-encoding": "^1.0.6",
     "jwt-decode": "^4.0.0",
     "uuid": "^9.0.1"
   },
