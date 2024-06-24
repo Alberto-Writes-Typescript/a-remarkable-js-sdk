@@ -46,7 +46,7 @@
     "@polkadot/x-textencoder": "^12.6.2",
     "base64-js": "^1.5.1",
     "jwt-decode": "^4.0.0",
-    "uuid": "^9.0.1"
+    "uuid": "^10.0.0"
   },
   "peerDependencies": {},
   "devDependencies": {
@@ -56,7 +56,7 @@
     "@pollyjs/core": "^6.0.6",
     "@pollyjs/persister-fs": "^6.0.6",
     "@types/jest": "^29.5.12",
-    "@types/uuid": "^9.0.8",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
     "consola": "^3.2.3",
